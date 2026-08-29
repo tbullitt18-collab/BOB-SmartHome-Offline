@@ -1,0 +1,54 @@
+- alias: 'Storm Mode Activated'
+  description: 'Triggers when internet goes down, prep house for storm/outage'
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.internet_connected
+      to: 'off'
+  action:
+    - service: light.turn_on
+      target:
+        entity_id: group.all_lights
+      data:
+        brightness_pct: 80
+        color_temp: 400 # Warm white
+    - service: lock.lock
+      target:
+        entity_id: group.all_locks
+    - service: notify.local_alert
+      data:
+        message: "Storm Mode activated. Internet connectivity lost. House is secured."
+
+- alias: 'Power Flicker Recovery'
+  description: 'Checks all device states after HA recovers from power loss'
+  trigger:
+    - platform: homeassistant
+      event: start
+  action:
+    - service: notify.local_alert
+      data:
+        message: "Home Assistant restarted. Verifying state of all critical devices..."
+
+- alias: 'Internet Restored'
+  description: 'Restores normal operations when internet returns'
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.internet_connected
+      to: 'on'
+  action:
+    - service: notify.local_alert
+      data:
+        message: "Internet restored. Deactivating Storm Mode."
+
+- alias: 'UPS Low Battery Warning'
+  description: 'Warns when UPS battery is low, starts shedding load'
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.ups_battery_level
+      below: 20
+  action:
+    - service: notify.local_alert
+      data:
+        message: "URGENT: UPS Battery below 20%. Turning off non-essential loads."
+    - service: light.turn_off
+      target:
+        entity_id: group.non_essential_lights

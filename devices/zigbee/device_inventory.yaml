@@ -1,0 +1,80 @@
+devices:
+  - name: Living Room Lamp
+    ieee_address: "00:15:8d:00:01:2a:b1:c1"
+    model: "Hue White"
+    location: "Living Room"
+    room: "Living Room"
+    last_seen: ""
+    type: "light"
+
+  - name: Kitchen Motion
+    ieee_address: "00:15:8d:00:02:3b:c2:d2"
+    model: "Aqara Motion Sensor"
+    location: "Kitchen Ceiling"
+    room: "Kitchen"
+    last_seen: ""
+    type: "sensor"
+
+  - name: Master Bedroom Plug
+    ieee_address: "00:15:8d:00:03:4c:d3:e3"
+    model: "Sonoff S31"
+    location: "Nightstand"
+    room: "Master Bedroom"
+    last_seen: ""
+    type: "plug"
+
+  - name: Front Door Contact
+    ieee_address: "00:15:8d:00:04:5d:e4:f4"
+    model: "Aqara Door/Window Sensor"
+    location: "Front Door"
+    room: "Entryway"
+    last_seen: ""
+    type: "sensor"
+
+  - name: Hallway Light
+    ieee_address: "00:15:8d:00:05:6e:f5:a5"
+    model: "IKEA TRADFRI"
+    location: "Hallway Center"
+    room: "Hallway"
+    last_seen: ""
+    type: "light"
+
+  - name: Bathroom Temp/Humidity
+    ieee_address: "00:15:8d:00:06:7f:a6:b6"
+    model: "Aqara Temp Sensor"
+    location: "Bathroom Wall"
+    room: "Bathroom"
+    last_seen: ""
+    type: "sensor"
+
+  - name: Garage Door Sensor
+    ieee_address: "00:15:8d:00:07:8a:b7:c7"
+    model: "SmartThings Multipurpose"
+    location: "Garage Main Door"
+    room: "Garage"
+    last_seen: ""
+    type: "sensor"
+
+  - name: Office Desk Plug
+    ieee_address: "00:15:8d:00:08:9b:c8:d8"
+    model: "Sonoff S31"
+    location: "Office Desk"
+    room: "Office"
+    last_seen: ""
+    type: "plug"
+
+  - name: Dining Room Chandelier
+    ieee_address: "00:15:8d:00:09:ac:d9:e9"
+    model: "Hue Color"
+    location: "Dining Table"
+    room: "Dining Room"
+    last_seen: ""
+    type: "light"
+
+  - name: Back Porch Motion
+    ieee_address: "00:15:8d:00:0a:bd:ea:fa"
+    model: "Hue Outdoor Sensor"
+    location: "Back Porch Eaves"
+    room: "Exterior"
+    last_seen: ""
+    type: "sensor"

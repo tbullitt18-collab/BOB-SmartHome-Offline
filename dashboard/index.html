@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOB SMART HOME COMMAND CENTER</title>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --text-color: #c9d1d9;
+            --accent-green: #00ff88;
+            --warning-orange: #ff8c00;
+            --danger-red: #ff3860;
+            --border-color: #30363d;
+            --highlight: #58a6ff;
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-family);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--border-color);
+            transition: background-color 0.3s, border-bottom-color 0.3s;
+        }
+
+        header.storm-mode {
+            background-color: #3d0d0d;
+            border-bottom-color: var(--danger-red);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-color);
+        }
+
+        .header-stats {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .stat-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: #21262d;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .pulse-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--accent-green);
+            animation: pulse 1.5s infinite;
+        }
+
+        .pulse-dot.offline {
+            background-color: var(--danger-red);
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7); }
+            70% { box-shadow: 0 0 0 6px rgba(0, 255, 136, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0); }
+        }
+
+        /* Grid Layout */
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            padding: 1.5rem;
+            flex: 1;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .card h2 {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            color: var(--highlight);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Specific Panels */
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-value {
+            font-weight: bold;
+        }
+        
+        .text-green { color: var(--accent-green); }
+        .text-orange { color: var(--warning-orange); }
+        .text-red { color: var(--danger-red); }
+
+        .progress-bar {
+            width: 100%;
+            background-color: #21262d;
+            border-radius: 4px;
+            height: 12px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--accent-green);
+            transition: width 0.5s ease;
+        }
+
+        /* Controls */
+        .control-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+        }
+
+        .toggle-btn {
+            background-color: #21262d;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 0.4rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+        }
+
+        .toggle-btn.on {
+            background-color: #d29922; /* Yellowish for lights */
+            color: #000;
+            border-color: #d29922;
+        }
+        
+        .toggle-btn.locked {
+            background-color: var(--danger-red);
+            color: #fff;
+            border-color: var(--danger-red);
+        }
+        
+        .toggle-btn.unlocked {
+            background-color: var(--accent-green);
+            color: #000;
+            border-color: var(--accent-green);
+        }
+
+        input[type=range] {
+            width: 100px;
+            cursor: pointer;
+        }
+
+        /* Cameras */
+        .camera-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        .camera-feed {
+            background-color: #000;
+            aspect-ratio: 16 / 9;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border-radius: 4px;
+        }
+
+        .camera-label {
+            position: absolute;
+            bottom: 4px;
+            left: 4px;
+            font-size: 0.7rem;
+            background: rgba(0,0,0,0.7);
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+
+        .motion-badge {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background-color: var(--danger-red);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        /* Circular Gauge */
+        .gauges {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .gauge {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 4px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            border-top-color: var(--highlight);
+        }
+        .gauge .val {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .gauge .lbl {
+            font-size: 0.7rem;
+            color: #8b949e;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .action-btn {
+            padding: 1rem;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+        .btn-storm { background-color: var(--warning-orange); color: #000; }
+        .btn-lights { background-color: #d29922; color: #000; }
+        .btn-locks { background-color: var(--accent-green); color: #000; }
+        .btn-alert { background-color: var(--danger-red); color: #fff; grid-column: span 2;}
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1rem;
+            font-size: 0.8rem;
+            color: #8b949e;
+            border-top: 1px solid var(--border-color);
+            background-color: var(--card-bg);
+        }
+
+    </style>
+</head>
+<body>
+
+    <header id="main-header">
+        <h1>BOB SMART HOME COMMAND CENTER</h1>
+        <div class="header-stats">
+            <div class="stat-badge" title="Internet Status">
+                <span class="pulse-dot" id="inet-pulse"></span> <span id="inet-status">ONLINE</span>
+            </div>
+            <div class="stat-badge" title="Storm Risk">
+                🌩️ <span id="storm-risk-badge" class="text-green">LOW</span>
+            </div>
+            <div class="stat-badge">
+                🕒 <span id="clock">00:00:00</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <!-- SYSTEM STATUS -->
+        <div class="card">
+            <h2>SYSTEM STATUS <span>v1.0.4</span></h2>
+            <div class="status-row"><span>Main Hub</span> <span class="status-value text-green">ONLINE</span></div>
+            <div class="status-row"><span>Local Network</span> <span class="status-value text-green">192.168.1.1 UP</span></div>
+            <div class="status-row"><span>Internet Uplink</span> <span class="status-value text-green" id="uplink-status">STABLE</span></div>
+            <div>
+                <div class="status-row"><span>UPS Battery</span> <span class="status-value" id="ups-val">98%</span></div>
+                <div class="progress-bar"><div class="progress-fill" id="ups-bar" style="width: 98%;"></div></div>
+            </div>
+        </div>
+
+        <!-- STORM ALERT -->
+        <div class="card">
+            <h2>STORM ALERT PANEL</h2>
+            <div class="status-row" style="font-size: 1.2rem;">Risk Level: <strong class="text-green" id="storm-risk-text">LOW</strong></div>
+            <div class="status-row">Next Weather Event: <span id="storm-countdown">No active alerts</span></div>
+            <hr style="border-color: var(--border-color); margin: 0.5rem 0;">
+            <p style="font-size: 0.9rem; color: #8b949e;">Recommended Actions:</p>
+            <ul style="font-size: 0.9rem; padding-left: 1.5rem; color: #c9d1d9;">
+                <li>Keep UPS charged</li>
+                <li>Monitor external cameras</li>
+            </ul>
+        </div>
+
+        <!-- LIGHTS -->
+        <div class="card">
+            <h2>LIGHTS</h2>
+            <div class="control-group">
+                <span>Living Room</span>
+                <input type="range" min="0" max="100" value="80">
+                <button class="toggle-btn on" onclick="toggleLight(this)">ON</button>
+            </div>
+            <div class="control-group">
+                <span>Kitchen</span>
+                <input type="range" min="0" max="100" value="100">
+                <button class="toggle-btn on" onclick="toggleLight(this)">ON</button>
+            </div>
+            <div class="control-group">
+                <span>Bedroom</span>
+                <input type="range" min="0" max="100" value="0">
+                <button class="toggle-btn" onclick="toggleLight(this)">OFF</button>
+            </div>
+            <div class="control-group">
+                <span>Exterior</span>
+                <input type="range" min="0" max="100" value="100">
+                <button class="toggle-btn on" onclick="toggleLight(this)">ON</button>
+            </div>
+        </div>
+
+        <!-- LOCKS -->
+        <div class="card">
+            <h2>LOCKS <span>SECURE</span></h2>
+            <div class="control-group">
+                <span>Front Door</span>
+                <span style="font-size: 0.7rem; color: #8b949e;" id="lock-front-time">2h ago</span>
+                <button class="toggle-btn locked" onclick="toggleLock(this, 'Front Door')">LOCKED</button>
+            </div>
+            <div class="control-group">
+                <span>Back Door</span>
+                <span style="font-size: 0.7rem; color: #8b949e;" id="lock-back-time">5h ago</span>
+                <button class="toggle-btn locked" onclick="toggleLock(this, 'Back Door')">LOCKED</button>
+            </div>
+            <div class="control-group">
+                <span>Garage</span>
+                <span style="font-size: 0.7rem; color: #8b949e;" id="lock-garage-time">10m ago</span>
+                <button class="toggle-btn locked" onclick="toggleLock(this, 'Garage')">LOCKED</button>
+            </div>
+        </div>
+
+        <!-- CLIMATE -->
+        <div class="card">
+            <h2>CLIMATE</h2>
+            <div class="gauges">
+                <div class="gauge">
+                    <div class="val" id="temp-lr">72°F</div>
+                    <div class="lbl">Living</div>
+                </div>
+                <div class="gauge">
+                    <div class="val" id="temp-br">68°F</div>
+                    <div class="lbl">Bedroom</div>
+                </div>
+                <div class="gauge" style="border-top-color: var(--warning-orange);">
+                    <div class="val" id="temp-out">85°F</div>
+                    <div class="lbl">Outside</div>
+                </div>
+            </div>
+            <div class="control-group" style="margin-top: 1rem;">
+                <span>Thermostat Set: <span id="thermo-val" class="text-green">70°F</span></span>
+                <div>
+                    <button class="toggle-btn" onclick="adjTemp(-1)">-</button>
+                    <button class="toggle-btn" onclick="adjTemp(1)">+</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- POWER MONITOR -->
+        <div class="card">
+            <h2>POWER MONITOR <span id="total-pwr">1420 W</span></h2>
+            <div>
+                <div class="status-row"><span>HVAC</span> <span>800 W</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width: 60%; background-color: var(--highlight);"></div></div>
+            </div>
+            <div style="margin-top: 0.5rem;">
+                <div class="status-row"><span>Appliances</span> <span>450 W</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width: 30%; background-color: var(--warning-orange);"></div></div>
+            </div>
+            <div style="margin-top: 0.5rem;">
+                <div class="status-row"><span>Always On</span> <span>170 W</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width: 10%; background-color: #8b949e;"></div></div>
+            </div>
+        </div>
+
+        <!-- CAMERAS -->
+        <div class="card">
+            <h2>CAMERAS</h2>
+            <div class="camera-grid">
+                <div class="camera-feed">
+                    <span class="camera-label">Driveway</span>
+                    <span class="motion-badge" style="display: block;">Motion</span>
+                    <div style="color: #444; font-size: 0.8rem;">[ NO SIGNAL ]</div>
+                </div>
+                <div class="camera-feed">
+                    <span class="camera-label">Front Door</span>
+                    <div style="color: #444; font-size: 0.8rem;">[ NO SIGNAL ]</div>
+                </div>
+                <div class="camera-feed">
+                    <span class="camera-label">Backyard</span>
+                    <div style="color: #444; font-size: 0.8rem;">[ NO SIGNAL ]</div>
+                </div>
+                <div class="camera-feed">
+                    <span class="camera-label">Garage</span>
+                    <div style="color: #444; font-size: 0.8rem;">[ NO SIGNAL ]</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI INSIGHTS -->
+        <div class="card">
+            <h2>BOB BRAIN INSIGHTS 🧠</h2>
+            <div style="background-color: #0d1117; padding: 1rem; border-radius: 4px; border: 1px solid var(--border-color); height: 100%;">
+                <p style="color: var(--highlight); margin-bottom: 0.5rem;">&gt; Analyzing home patterns...</p>
+                <ul style="font-size: 0.85rem; line-height: 1.6; list-style-type: none;" id="ai-log">
+                    <li>[OK] Normal power usage detected.</li>
+                    <li>[INFO] Occupancy predicted in Kitchen in 15m.</li>
+                    <li>[WARN] Outside temp rising rapidly.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- QUICK ACTIONS -->
+        <div class="card">
+            <h2>QUICK ACTIONS</h2>
+            <div class="quick-actions">
+                <button class="action-btn btn-storm" id="btn-storm" onclick="toggleStormMode()">STORM MODE OFF</button>
+                <button class="action-btn btn-lights" onclick="allLights(true)">ALL LIGHTS ON</button>
+                <button class="action-btn btn-locks" onclick="allLocks(true)">SECURE LOCKS</button>
+                <button class="action-btn btn-alert" onclick="alert('EMERGENCY BROADCAST SENT TO LOCAL NETWORK')">EMERGENCY ALERT</button>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        BOB v1.0 | Hackathon Edition | Offline-First Smart Home | All systems local
+    </footer>
+
+    <script>
+        // Live Clock
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString('en-US', { hour12: false });
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // UI Interactions
+        function toggleLight(btn) {
+            if (btn.classList.contains('on')) {
+                btn.classList.remove('on');
+                btn.innerText = 'OFF';
+            } else {
+                btn.classList.add('on');
+                btn.innerText = 'ON';
+            }
+        }
+
+        function toggleLock(btn, name) {
+            const timeSpan = btn.previousElementSibling;
+            if (btn.classList.contains('locked')) {
+                btn.classList.remove('locked');
+                btn.classList.add('unlocked');
+                btn.innerText = 'UNLOCKED';
+            } else {
+                btn.classList.remove('unlocked');
+                btn.classList.add('locked');
+                btn.innerText = 'LOCKED';
+            }
+            timeSpan.innerText = 'just now';
+        }
+
+        let thermoSet = 70;
+        function adjTemp(delta) {
+            thermoSet += delta;
+            document.getElementById('thermo-val').innerText = thermoSet + '°F';
+        }
+
+        function allLights(turnOn) {
+            document.querySelectorAll('.card:nth-child(3) .toggle-btn').forEach(btn => {
+                if (turnOn) {
+                    btn.classList.add('on');
+                    btn.innerText = 'ON';
+                }
+            });
+        }
+
+        function allLocks(secure) {
+            document.querySelectorAll('.card:nth-child(4) .toggle-btn').forEach(btn => {
+                if (secure) {
+                    btn.classList.remove('unlocked');
+                    btn.classList.add('locked');
+                    btn.innerText = 'LOCKED';
+                    btn.previousElementSibling.innerText = 'just now';
+                }
+            });
+        }
+
+        let stormMode = false;
+        function toggleStormMode() {
+            stormMode = !stormMode;
+            const header = document.getElementById('main-header');
+            const btn = document.getElementById('btn-storm');
+            const riskText = document.getElementById('storm-risk-text');
+            const riskBadge = document.getElementById('storm-risk-badge');
+            const countdown = document.getElementById('storm-countdown');
+            
+            if (stormMode) {
+                header.classList.add('storm-mode');
+                btn.innerText = 'STORM MODE ON';
+                btn.style.backgroundColor = 'var(--danger-red)';
+                btn.style.color = '#fff';
+                riskText.innerText = 'CRITICAL';
+                riskText.className = 'text-red';
+                riskBadge.innerText = 'CRITICAL';
+                riskBadge.className = 'text-red';
+                countdown.innerText = 'Approaching in 2h 15m';
+                countdown.style.color = 'var(--danger-red)';
+                addAiLog('[ALERT] Storm Mode engaged. Securing perimeter.');
+                allLocks(true);
+            } else {
+                header.classList.remove('storm-mode');
+                btn.innerText = 'STORM MODE OFF';
+                btn.style.backgroundColor = 'var(--warning-orange)';
+                btn.style.color = '#000';
+                riskText.innerText = 'LOW';
+                riskText.className = 'text-green';
+                riskBadge.innerText = 'LOW';
+                riskBadge.className = 'text-green';
+                countdown.innerText = 'No active alerts';
+                countdown.style.color = 'inherit';
+                addAiLog('[INFO] Storm Mode disengaged.');
+            }
+        }
+
+        function addAiLog(msg) {
+            const ul = document.getElementById('ai-log');
+            const li = document.createElement('li');
+            li.innerText = msg;
+            ul.prepend(li);
+            if(ul.children.length > 5) ul.removeChild(ul.lastChild);
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key.toLowerCase() === 's') toggleStormMode();
+            if (e.key.toLowerCase() === 'l') allLocks(true);
+        });
+
+        // Simulate Live Data Updates
+        setInterval(() => {
+            // Fluctuate UPS
+            let upsVal = parseInt(document.getElementById('ups-val').innerText);
+            if (Math.random() > 0.7) {
+                upsVal += (Math.random() > 0.5 ? 1 : -1);
+                if (upsVal > 100) upsVal = 100;
+                if (upsVal < 80) upsVal = 80;
+                document.getElementById('ups-val').innerText = upsVal + '%';
+                document.getElementById('ups-bar').style.width = upsVal + '%';
+                if(upsVal < 90) document.getElementById('ups-bar').style.backgroundColor = 'var(--warning-orange)';
+                else document.getElementById('ups-bar').style.backgroundColor = 'var(--accent-green)';
+            }
+
+            // Fluctuate Temps
+            if(Math.random() > 0.8) {
+                let tempLR = parseFloat(document.getElementById('temp-lr').innerText);
+                tempLR += (Math.random() > 0.5 ? 0.1 : -0.1);
+                document.getElementById('temp-lr').innerText = tempLR.toFixed(1) + '°F';
+            }
+
+            // Fluctuate Power
+            if(Math.random() > 0.5) {
+                let basePower = 1420;
+                let fluc = Math.floor(Math.random() * 50) - 25;
+                document.getElementById('total-pwr').innerText = (basePower + fluc) + ' W';
+            }
+            
+            // Randomly flash motion badge
+            const badges = document.querySelectorAll('.motion-badge');
+            if (Math.random() > 0.8) {
+                const b = badges[Math.floor(Math.random() * badges.length)];
+                b.style.display = b.style.display === 'none' ? 'block' : 'none';
+            }
+            
+        }, 3000);
+    </script>
+</body>
+</html>

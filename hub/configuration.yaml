@@ -1,0 +1,43 @@
+# Home Assistant Core Configuration
+
+homeassistant:
+  # Name of the location where Home Assistant is running
+  name: Home
+  # Location required to calculate the time the sun rises and sets
+  latitude: 0.0 # Placeholder
+  longitude: 0.0 # Placeholder
+  # Impacts weather/sunrise data
+  elevation: 0
+  # metric for Metric, imperial for Imperial
+  unit_system: metric
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: UTC
+
+# Enable local authentication and trusted networks
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 127.0.0.1
+    - 192.168.1.0/24
+  # No external URL required, focus on internal
+  ip_ban_enabled: true
+  login_attempts_threshold: 5
+
+# MQTT Broker for local device communication (no cloud)
+mqtt:
+  broker: 192.168.1.10
+  port: 1883
+  client_id: homeassistant
+  keepalive: 60
+
+# Enables the frontend
+frontend:
+
+# Logging configuration
+logger:
+  default: info
+  logs:
+    homeassistant.components.mqtt: debug
+
+# Map integration
+map:

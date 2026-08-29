@@ -1,0 +1,38 @@
+=========================================================
+            BOB'S SMART HOME EMERGENCY CARD
+=========================================================
+
+[ BEFORE STORM ]
+[ ] Verify UPS battery levels (Test via HA Dashboard)
+[ ] Charge all mobile devices and backup power banks
+[ ] Ensure offline local control is working (Test Wi-Fi disconnected)
+[ ] Secure physical outdoor smart devices (cameras, sensors)
+[ ] Download latest offline map of local area on phone
+
+[ DURING OUTAGE ]
+[ ] Unplug non-essential electronics to prevent surge damage
+[ ] Switch smart home hub to 'Storm Mode' if not automatic
+[ ] Monitor UPS levels via local hub
+[ ] Minimize opening fridge/freezer doors
+
+[ HOW TO ACCESS SMART HOME OFFLINE ]
+1. Ensure your phone/laptop is connected to the Local Wi-Fi (Even if "No Internet")
+2. Do NOT switch to cellular data
+3. Open web browser
+4. Go to: http://192.168.1.10:8123 or http://homeassistant.local:8123
+5. Log in with local credentials (Not cloud credentials)
+
+[ DEVICE QUICK REFERENCE ]
+- Router: 192.168.1.1 (Admin/admin_password)
+- Home Assistant Hub: 192.168.1.10:8123
+- Backup AP: 192.168.1.2
+- NAS/Storage: 192.168.1.15
+- MQTT Broker: 192.168.1.10 (Port 1883)
+- Zigbee Coordinator: /dev/ttyUSB0 (on Hub)
+
+[ PHYSICAL BACKUP LOCATIONS ]
+- Flashlights: Kitchen Top Drawer, Master Bedroom Nightstand
+- Batteries (AA/AAA): Utility Room Shelf 2
+- Generator & Fuel: Garage, Back Corner
+- Hard Copy Manuals: Office File Cabinet, Top Drawer
+=========================================================
