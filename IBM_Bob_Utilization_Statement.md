@@ -1,16 +1,21 @@
 # IBM Bob Utilization Statement
 
-**Project:** BOB Smart Home Offline Survival System
-**Hackathon:** IBM TechXchange 2026 Pre-conference Dev Day Hackathon
+**Project:** BOB Smart Home Offline Survival System  
+**Hackathon:** IBM TechXchange 2026 Pre-conference Dev Day Hackathon  
+**Author & Inventor:** Todd Bullitt
+
+---
 
 ### How IBM Bob Was Utilized
-For this project, **IBM Bob 2.0** was utilized not just as a code assistant, but as a full **Agentic Engineering Team**. By leveraging IBM Bob's multi-agent capabilities, we transformed a high-level conceptual problem (smart homes failing during internet outages) into a production-ready, enterprise-scaled solution. 
 
-Specifically, IBM Bob was utilized to:
-1. **Multi-Agent Orchestration:** We deployed IBM Bob to spawn five parallel subagents (`Smart Home Builder`, `Graphite Metrics`, `Watson AI`, `Dashboard UI`, and `Enterprise Architect`). These agents worked concurrently to build different stack layers of the project simultaneously.
-2. **Machine Learning Generation:** IBM Bob was used to write and refine the edge-native machine learning models (`scikit-learn` Random Forest for storm prediction and Isolation Forest for anomaly detection).
-3. **Infrastructure & DevOps:** IBM Bob generated the Kubernetes (K3s) manifests, Nginx load balancer configurations, and EMQX Docker Compose files to prove the system could scale to an enterprise level.
-4. **Data Simulation & Chaos Testing:** To prove the concept without risking real-world hardware, we tasked IBM Bob with generating synthetic human occupancy data and writing a "Chaos Monkey" script to heavily stress-test the local API via multi-threaded HTTP bombardment.
-5. **Patent & Prior Art Research:** We utilized IBM Bob's research agent to scrape web data and patent databases, validating that the specific combination of localized AI and predictive load-shedding was a unique, uncrowded intellectual property space.
+For this project, **IBM Bob 2.0** was utilized as an AI code syntax generator and developer assistant tool. All core concepts, problem formulation, system architecture, disaster resilience strategies, and load-shedding methodologies were conceived and directed by the human developer. 
 
-IBM Bob acted as the ultimate autonomous AI developer tool, enabling rapid prototyping, deep architectural scaling, and rigorous closed-loop testing within the hackathon time limits.
+IBM Bob was tasked with writing the implementation code syntax across the following areas:
+
+1. **Code Syntax Generation:** Writing Python syntax for the edge machine learning modules (`storm_predictor.py`, `anomaly_detector.py`, `occupancy_learner.py`, and `device_health_monitor.py`).
+2. **Configuration & Template Syntax:** Generating syntax for local Home Assistant YAML configurations, Zigbee device inventories, and shell scripts.
+3. **Infrastructure Manifests:** Writing Kubernetes (K3s) YAML manifests, EMQX Docker Compose files, and Nginx reverse proxy syntax.
+4. **UI & API Bridge Implementation:** Writing the vanilla JavaScript, HTML, CSS, and Python standard library HTTP server syntax for the offline dashboard.
+5. **Stress Test Scripts:** Generating the multi-threaded Python syntax for the Chaos Monkey load testing tool.
+
+In summary, IBM Bob served strictly as a rapid code syntax and implementation tool executing the developer's instructions and system design.
