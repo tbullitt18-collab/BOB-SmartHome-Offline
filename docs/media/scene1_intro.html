@@ -1,0 +1,107 @@
+
+            <!DOCTYPE html>
+            <html>
+            <head>
+            <meta charset="utf-8">
+            <style>
+                body {
+                    margin: 0; padding: 0;
+                    width: 1920px; height: 1080px;
+                    background: radial-gradient(circle at 10% 20%, #0d1117 0%, #030712 100%);
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+                    color: #f0f6fc;
+                    display: flex; flex-direction: column;
+                    box-sizing: border-box; overflow: hidden;
+                }
+                .header {
+                    padding: 35px 60px;
+                    display: flex; justify-content: space-between; align-items: center;
+                    border-bottom: 2px solid #30363d;
+                }
+                .logo-area { display: flex; align-items: center; gap: 20px; }
+                .logo {
+                    background: linear-gradient(135deg, #00ff88, #00b4d8);
+                    color: #000; font-weight: 900; font-size: 32px;
+                    padding: 8px 24px; border-radius: 12px; letter-spacing: 2px;
+                }
+                .event-title { font-size: 20px; color: #8b949e; text-transform: uppercase; letter-spacing: 1.5px; }
+                .badge {
+                    background: #238636; color: #fff;
+                    padding: 8px 20px; border-radius: 20px;
+                    font-size: 16px; font-weight: 700; letter-spacing: 1px;
+                }
+                .content {
+                    flex: 1; padding: 40px 60px;
+                    display: flex; flex-direction: column; justify-content: center;
+                }
+                h1 {
+                    font-size: 52px; margin: 0 0 12px 0;
+                    background: linear-gradient(90deg, #58a6ff, #39d353, #00ff88);
+                    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+                }
+                h2 { font-size: 26px; color: #c9d1d9; margin: 0 0 35px 0; font-weight: 400; }
+                .card-grid {
+                    display: grid; grid-template-columns: repeat(3, 1fr);
+                    gap: 30px; margin-bottom: 30px;
+                }
+                .card {
+                    background: #161b22; border: 1px solid #30363d;
+                    border-radius: 16px; padding: 30px;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+                }
+                .card-title {
+                    color: #58a6ff; font-size: 22px; font-weight: 700;
+                    margin-bottom: 12px;
+                }
+                .card-text { color: #8b949e; font-size: 18px; line-height: 1.6; }
+                .terminal-box {
+                    background: #0d1117; border: 1px solid #30363d;
+                    border-radius: 12px; padding: 30px;
+                    font-family: 'Consolas', 'Courier New', monospace;
+                    font-size: 20px; color: #39d353; line-height: 1.6;
+                    white-space: pre-wrap;
+                }
+                .footer {
+                    padding: 20px 60px; background: #161b22;
+                    border-top: 1px solid #30363d;
+                    display: flex; justify-content: space-between;
+                    color: #8b949e; font-size: 18px;
+                }
+            </style>
+            </head>
+            <body>
+                <div class="header">
+                    <div class="logo-area">
+                        <div class="logo">BOB 2.0</div>
+                        <div class="event-title">IBM TechXchange 2026 Dev Day Hackathon</div>
+                    </div>
+                    <div class="badge">PROBLEM & MOTIVATION</div>
+                </div>
+                <div class="content">
+                    <h1>BOB: Offline Smart Home Survival System</h1>
+                    <h2>IBM TechXchange 2026 Pre-conference Dev Day Hackathon</h2>
+                    
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-title">⚠️ The Challenge</div>
+                        <div class="card-text">Modern smart homes depend entirely on cloud servers and ISP routers. When storms cause blackouts, smart devices fail and batteries die rapidly.</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">💡 The BOB Solution</div>
+                        <div class="card-text">100% offline, edge-native architecture using local mesh networks (Zigbee/Z-Wave), local API bridges, and embedded machine learning.</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">🛡️ Life-Safety Priority</div>
+                        <div class="card-text">Proactively preserves battery backup and hardware by executing intelligent load-shedding before power is lost.</div>
+                    </div>
+                </div>
+                
+                </div>
+                <div class="footer">
+                    <div>Project: BOB Smart Home Offline Survival System</div>
+                    <div>Repository: github.com/tbullitt18-collab/BOB-SmartHome-Offline</div>
+                    <div>Theme: Build with purpose using IBM Bob 2.0</div>
+                </div>
+            </body>
+            </html>
+            

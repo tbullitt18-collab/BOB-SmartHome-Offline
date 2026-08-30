@@ -1,0 +1,6 @@
+file 'C:/Users/tbull/.gemini/antigravity/scratch/BOB-SmartHome-Offline/docs/media/scene1_intro_segment.mp4'
+file 'C:/Users/tbull/.gemini/antigravity/scratch/BOB-SmartHome-Offline/docs/media/scene2_dashboard_segment.mp4'
+file 'C:/Users/tbull/.gemini/antigravity/scratch/BOB-SmartHome-Offline/docs/media/scene3_watson_ai_segment.mp4'
+file 'C:/Users/tbull/.gemini/antigravity/scratch/BOB-SmartHome-Offline/docs/media/scene4_occupancy_closed_loop_segment.mp4'
+file 'C:/Users/tbull/.gemini/antigravity/scratch/BOB-SmartHome-Offline/docs/media/scene5_enterprise_scale_segment.mp4'
+file 'C:/Users/tbull/.gemini/antigravity/scratch/BOB-SmartHome-Offline/docs/media/scene6_ibm_bob_usage_segment.mp4'

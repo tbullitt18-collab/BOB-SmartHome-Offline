@@ -1,0 +1,22 @@
+
+================================================================================
+ERROR LOGGED: 2026-08-30T12:16:51.716Z
+User ID: tbullitt18@gmail.com
+================================================================================
+Error Name: TypeError
+Error Message: Cannot read properties of undefined (reading 'maxTokens')
+
+Stack Trace:
+TypeError: Cannot read properties of undefined (reading 'maxTokens')
+    at oit.convertToOpenAIFormat (file:///C:/Users/tbull/OneDrive/Desktop/package/bundle/bob.js:2168:625)
+    at async oit.generateContentStreamInternal (file:///C:/Users/tbull/OneDrive/Desktop/package/bundle/bob.js:2152:528)
+    at async _3.loggingStreamWrapper (file:///C:/Users/tbull/OneDrive/Desktop/package/bundle/bob.js:800:31296)
+    at async MY.processStreamResponse (file:///C:/Users/tbull/OneDrive/Desktop/package/bundle/bob.js:2463:81)
+    at async file:///C:/Users/tbull/OneDrive/Desktop/package/bundle/bob.js:2457:22044
+    at async sG.run (file:///C:/Users/tbull/OneDrive/Desktop/package/bundle/bob.js:2463:3153)
+    at async Bwe.sendMessageStream (file:///C:/Users/tbull/OneDrive/Desktop/package/bundle/bob.js:2796:511)
+    at async file:///C:/Users/tbull/OneDrive/Desktop/package/bundle/bob.js:4569:10111
+    at async file:///C:/Users/tbull/OneDrive/Desktop/package/bundle/bob.js:4569:11605
+    at async mR (file:///C:/Users/tbull/OneDrive/Desktop/package/bundle/bob.js:800:17190)
+================================================================================
+
