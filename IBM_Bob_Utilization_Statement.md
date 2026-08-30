@@ -13,4 +13,4 @@ Specifically, IBM Bob was utilized to:
 4. **Data Simulation & Chaos Testing:** To prove the concept without risking real-world hardware, we tasked IBM Bob with generating synthetic human occupancy data and writing a "Chaos Monkey" script to heavily stress-test the local API via multi-threaded HTTP bombardment.
 5. **Patent & Prior Art Research:** We utilized IBM Bob's research agent to scrape web data and patent databases, validating that the specific combination of localized AI and predictive load-shedding was a unique, uncrowded intellectual property space.
 
-IBM Bob acted as the ultimate technical co-founder, enabling rapid prototyping, deep architectural scaling, and rigorous closed-loop testing within the hackathon time limits.
+IBM Bob acted as the ultimate autonomous AI developer tool, enabling rapid prototyping, deep architectural scaling, and rigorous closed-loop testing within the hackathon time limits.
