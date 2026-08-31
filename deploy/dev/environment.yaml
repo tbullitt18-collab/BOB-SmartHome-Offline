@@ -1,0 +1,12 @@
+environment: "dev"
+target_cluster: "local-k3s-sandbox"
+log_level: "DEBUG"
+simulation_mode: true
+policies_enabled:
+  - "safety-hazard-protocol"
+  - "developer-focus-ambient"
+  - "storm-mode-resilience"
+  - "energy-anomaly-protection"
+guardrails:
+  require_hardware_ack: false
+  allow_synthetic_replays: true

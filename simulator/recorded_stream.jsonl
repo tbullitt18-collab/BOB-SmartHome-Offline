@@ -1,0 +1,5 @@
+{"event_id": "evt_9e67177b", "type": "dev.git.branch_switched", "source": "developer.workstation.git_hook", "timestamp": "2026-08-31T04:42:14.016487+00:00", "payload": {"branch_name": "feature/edge-policy-engine", "branch_prefix": "feature/"}}
+{"event_id": "evt_98caa8ec", "type": "dev.ci.build_status", "source": "ci.github_actions.webhook", "timestamp": "2026-08-31T04:42:14.016487+00:00", "payload": {"status": "passed", "repository": "BOB-SmartHome-Offline"}}
+{"event_id": "evt_2a01cf5a", "type": "sensor.barometric.reading", "source": "outdoor.weather_station", "timestamp": "2026-08-31T04:42:14.016487+00:00", "payload": {"barometric_pressure": 982.4, "unit": "hPa"}}
+{"event_id": "evt_92bf0458", "type": "power.draw.changed", "source": "living_room.hvac_circuit", "timestamp": "2026-08-31T04:42:14.016487+00:00", "payload": {"power_draw_watts": 3850.0, "voltage": 120.2}}
+{"event_id": "evt_78b28c90", "type": "safety.smoke.detected", "source": "hallway.smoke_detector", "timestamp": "2026-08-31T04:42:14.016487+00:00", "payload": {"smoke_density_ppm": 65.0, "co_level_ppm": 12}}

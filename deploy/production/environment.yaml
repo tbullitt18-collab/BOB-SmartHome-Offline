@@ -1,0 +1,13 @@
+environment: "production"
+target_cluster: "k3s-edge-ha-cluster"
+log_level: "WARN"
+simulation_mode: false
+policies_enabled:
+  - "safety-hazard-protocol"
+  - "storm-mode-resilience"
+  - "energy-anomaly-protection"
+guardrails:
+  require_hardware_ack: true
+  allow_synthetic_replays: false
+  enable_cryptographic_audit_chain: true
+  max_circuit_shedding_pct: 80

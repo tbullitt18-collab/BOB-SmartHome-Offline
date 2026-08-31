@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BOBDeviceCapabilities",
+  "description": "Standardized device capabilities catalog for protocol normalization",
+  "type": "object",
+  "properties": {
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["protocol", "category", "supported_actions", "safety_tier"],
+        "properties": {
+          "protocol": { "type": "string", "enum": ["zigbee", "zwave", "mqtt", "local_rest", "virtual"] },
+          "category": { "type": "string", "enum": ["lighting", "climate", "security", "power", "sensor", "notification"] },
+          "supported_actions": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "safety_tier": {
+            "type": "string",
+            "enum": ["informational", "non_critical", "critical_safety", "requires_approval"]
+          }
+        }
+      }
+    }
+  }
+}

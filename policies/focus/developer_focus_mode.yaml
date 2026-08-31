@@ -1,0 +1,38 @@
+policy_id: "developer-focus-ambient"
+version: "v1.1.0"
+name: "Developer Ambient Workflow & CI/CD Signaling"
+priority: 50
+description: "Bridges software engineering workflow states with physical smart home devices for zero-interruption focus."
+
+rules:
+  - rule_id: "rule-git-deep-work"
+    trigger_event: "dev.git.branch_switched"
+    conditions:
+      branch_prefix: "feature/"
+    actions:
+      - target: "lighting.office"
+        command: "set_scene"
+        parameters:
+          scene: "deep_work_focus"
+          brightness: 65
+          color: "#4A90E2" # Calming blue
+        requires_approval: false
+      - target: "notification.endpoints"
+        command: "set_dnd"
+        parameters:
+          level: "mute_non_critical"
+          duration_minutes: 90
+        requires_approval: false
+
+  - rule_id: "rule-ci-build-feedback"
+    trigger_event: "dev.ci.build_status"
+    actions:
+      - target: "lighting.office.ambient_strip"
+        command: "pulse_signal"
+        parameters:
+          color_map:
+            passed: "#00FF88" # Green pulse
+            failed: "#FF3860" # Red alert pulse
+            running: "#FFD600" # Yellow pulse
+          pulse_count: 2
+        requires_approval: false

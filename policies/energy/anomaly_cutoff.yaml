@@ -1,0 +1,26 @@
+policy_id: "energy-anomaly-protection"
+version: "v1.0.0"
+name: "Local Electrical Anomaly & Hardware Protection Policy"
+priority: 70
+description: "Detects aberrant circuit loads and prevents hardware damage or electrical fires."
+
+rules:
+  - rule_id: "rule-power-surge-anomaly"
+    trigger_event: "power.draw.changed"
+    ai_inference:
+      model_name: "DeviceAnomalyDetector"
+      model_version: "v1.0-iforest"
+      min_confidence: 0.90
+    actions:
+      - target: "power.plugs.non_critical"
+        command: "isolate_circuit"
+        parameters:
+          reason: "unusual_power_draw_spike"
+          cooldown_seconds: 300
+        requires_approval: false
+      - target: "system.notification"
+        command: "emit_warning"
+        parameters:
+          severity: "HIGH"
+          message: "Potential circuit overload detected by IsolationForest. Isolate target load."
+        requires_approval: false

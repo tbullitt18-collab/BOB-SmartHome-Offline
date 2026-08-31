@@ -1,0 +1,45 @@
+policy_id: "storm-mode-resilience"
+version: "v1.2.0"
+name: "Predictive Storm Resilience & Dynamic Load Shedding"
+priority: 90
+description: "Executes proactive energy conservation using local barometric ML and CASAS occupancy modeling."
+
+rules:
+  - rule_id: "rule-barometric-storm-risk"
+    trigger_event: "sensor.barometric.reading"
+    ai_inference:
+      model_name: "StormPredictor"
+      model_version: "v1.3-rf"
+      min_confidence: 0.85
+    actions:
+      - target: "system.mode"
+        command: "set_storm_mode"
+        parameters:
+          state: "ACTIVE"
+          pre_charge_battery: true
+        requires_approval: false
+
+  - rule_id: "rule-occupancy-load-shedding"
+    trigger_event: "power.grid.status_changed"
+    conditions:
+      grid_online: false
+    ai_inference:
+      model_name: "OccupancyLearner"
+      model_version: "v2.1-casas"
+      min_confidence: 0.70
+    actions:
+      - target: "lighting.unoccupied_zones"
+        command: "shed_load"
+        parameters:
+          action: "power_off"
+        requires_approval: false
+      - target: "climate.unoccupied_zones"
+        command: "eco_standby"
+        parameters:
+          temp_setback_degrees: 5
+        requires_approval: false
+      - target: "lighting.occupied_zones"
+        command: "emergency_ambient"
+        parameters:
+          brightness: 30
+        requires_approval: false

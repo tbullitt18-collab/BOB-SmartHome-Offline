@@ -1,0 +1,12 @@
+environment: "staging"
+target_cluster: "staging-microgrid-k3s"
+log_level: "INFO"
+simulation_mode: false
+policies_enabled:
+  - "safety-hazard-protocol"
+  - "storm-mode-resilience"
+  - "energy-anomaly-protection"
+guardrails:
+  require_hardware_ack: true
+  allow_synthetic_replays: true
+  max_circuit_shedding_pct: 50

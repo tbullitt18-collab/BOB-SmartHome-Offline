@@ -1,0 +1,28 @@
+policy_id: "safety-hazard-protocol"
+version: "v1.0.0"
+name: "Deterministic Life-Safety Emergency Override"
+priority: 100
+description: "Zero-latency deterministic rule. Overrides all AI and routine automations during hazard detection."
+
+rules:
+  - rule_id: "rule-smoke-hazard-emergency"
+    trigger_event: "safety.smoke.detected"
+    conditions:
+      smoke_density_ppm: ">= 50"
+    actions:
+      - target: "lighting.all"
+        command: "set_emergency_white"
+        parameters:
+          brightness: 100
+          color_temp: "5000K"
+        requires_approval: false
+      - target: "locks.all"
+        command: "unlock"
+        parameters:
+          reason: "life_safety_egress"
+        requires_approval: false
+      - target: "hvac.main"
+        command: "emergency_power_off"
+        parameters:
+          reason: "prevent_smoke_circulation"
+        requires_approval: false
