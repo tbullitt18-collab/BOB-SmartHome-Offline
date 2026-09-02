@@ -1,0 +1,70 @@
+# Helm values for BOB Edge Platform on Red Hat OpenShift / MicroShift
+global:
+  environment: production
+  clusterDomain: cluster.local
+
+replicaCount: 3
+
+image:
+  repository: quay.io/bob-edge/platform-core
+  pullPolicy: IfNotPresent
+  tag: "v1.0.0"
+
+serviceAccount:
+  create: true
+  name: "bob-edge-serviceaccount"
+
+podSecurityContext:
+  runAsNonRoot: false
+  fsGroup: 2000
+
+securityContext:
+  privileged: true
+  capabilities:
+    add: ["NET_ADMIN", "SYS_RAWIO"]
+
+service:
+  type: ClusterIP
+  port: 8888
+  mqttPort: 1883
+
+ingress:
+  enabled: true
+  className: "openshift-default"
+  annotations:
+    route.openshift.io/termination: "edge"
+  hosts:
+    - host: bob.edge.local
+      paths:
+        - path: /
+          pathType: Prefix
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1024Mi
+  requests:
+    cpu: 250m
+    memory: 512Mi
+
+autoscaling:
+  enabled: false
+
+nodeSelector:
+  node-role.kubernetes.io/edge: ""
+
+tolerations:
+  - key: "node.kubernetes.io/unreachable"
+    operator: "Exists"
+    effect: "NoExecute"
+    tolerationSeconds: 6000
+
+persistence:
+  auditLog:
+    enabled: true
+    storageClass: "local-storage"
+    size: 10Gi
+  policies:
+    enabled: true
+    storageClass: "local-storage"
+    size: 2Gi

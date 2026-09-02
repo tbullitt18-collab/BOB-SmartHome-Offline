@@ -1,0 +1,37 @@
+{
+  "org": "bob-edge-systems",
+  "label": "BOB Edge Deployment Pattern",
+  "description": "Deployment pattern for automated edge node provisioning across remote microgrids and buildings using IEAM",
+  "public": true,
+  "services": [
+    {
+      "serviceUrl": "io.bob-edge.platform",
+      "serviceOrgs": ["bob-edge-systems"],
+      "serviceArch": "amd64",
+      "serviceVersions": [
+        {
+          "version": "1.0.0",
+          "priority": {
+            "priority_value": 50,
+            "retries": 1,
+            "retry_durations": 3600,
+            "verified_durations": 52
+          },
+          "upgradePolicy": {
+            "lifecycle": "immediate"
+          }
+        }
+      ],
+      "dataVerificationCheck": true,
+      "nodeHwAttr": {
+        "memory": 2048,
+        "storage": 8192
+      }
+    }
+  ],
+  "agreementProtocols": [
+    {
+      "name": "Basic"
+    }
+  ]
+}

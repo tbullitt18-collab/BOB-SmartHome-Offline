@@ -70,7 +70,8 @@ python scripts/analyze_casas.py path/to/casas_data.txt --sensor M003
 
 ---
 
-## 📖 Extended Documentation
+## 📖 Extended Documentation & Commercialization
+- [**Commercial Portfolio & IBM Partner Strategy**](commercial/README.md): Full execution packages for IBM Partner Plus, Red Hat Marketplace, OpenShift/IEAM, and Utility pilots.
 - [**Developer Workflows & Physical DevOps Guide**](DEVELOPER_WORKFLOWS.md): Detailed deep-dive into event schemas, decision traces, and CI/CD replay.
 - [**Enterprise Scaling Architecture**](scale/ENTERPRISE_SCALING_GUIDE.md): K3s Kubernetes clustering and EMQX multi-broker scaling.
 - [**IBM Bob Utilization Statement**](IBM_Bob_Utilization_Statement.md): Official statement on how IBM Bob was utilized to generate code syntax.

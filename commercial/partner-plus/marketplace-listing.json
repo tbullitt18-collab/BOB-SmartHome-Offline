@@ -1,0 +1,78 @@
+{
+  "$schema": "https://marketplace.redhat.com/schemas/product-v1.json",
+  "product": {
+    "name": "BOB Edge Automation & Disaster Resilience Platform",
+    "slug": "bob-edge-automation-platform",
+    "short_description": "Offline-first edge automation and physical DevOps runtime for smart buildings, microgrids, and disaster resiliency.",
+    "categories": [
+      "Edge Computing",
+      "Internet of Things (IoT)",
+      "Disaster Recovery & Business Continuity",
+      "Automation & Management"
+    ],
+    "keywords": [
+      "edge-computing",
+      "offline-first",
+      "smart-home",
+      "microgrid",
+      "kubernetes",
+      "openshift",
+      "devops",
+      "disaster-resilience",
+      "load-shedding",
+      "ieam"
+    ],
+    "vendor": {
+      "name": "BOB Edge Systems",
+      "website": "https://github.com/tbullitt18-collab/BOB-SmartHome-Offline",
+      "support_email": "support@bob-edge.io"
+    },
+    "supported_architectures": ["amd64", "arm64"],
+    "supported_platforms": [
+      "Red Hat OpenShift 4.12+",
+      "Red Hat Device Edge (MicroShift)",
+      "K3s Lightweight Kubernetes"
+    ],
+    "pricing_plans": [
+      {
+        "id": "bob-edge-developer",
+        "name": "Community & Dev Edition",
+        "type": "free",
+        "price_usd": 0,
+        "features": [
+          "Single-node deployment",
+          "Full Automation-as-Code policy engine",
+          "Deterministic Event Replay simulator",
+          "Local decision tracing & audit trail"
+        ]
+      },
+      {
+        "id": "bob-edge-commercial-node",
+        "name": "Commercial Multi-Tenant Node",
+        "type": "recurring",
+        "billing_period": "annual",
+        "price_usd": 1200,
+        "features": [
+          "Up to 250 local Zigbee/Z-Wave/MQTT endpoints per gateway",
+          "Watson-class edge ML (StormPredictor, AnomalyDetector, CASAS Occupancy)",
+          "SHA-256 cryptographic tamper-evident audit log",
+          "Red Hat MicroShift & OpenShift certified operator",
+          "99.99% local edge uptime SLA"
+        ]
+      },
+      {
+        "id": "bob-grid-enterprise",
+        "name": "Utility Grid & Microgrid Tier",
+        "type": "custom",
+        "price_usd": 25000,
+        "features": [
+          "Unlimited edge gateway clustering (K3s / OpenShift)",
+          "Clustered EMQX MQTT (100k+ sensor events/sec)",
+          "Substation cold-load pickup surge protection",
+          "IBM Edge Application Manager (IEAM) automated policy distribution",
+          "Dedicated 24/7 mission-critical emergency support"
+        ]
+      }
+    ]
+  }
+}

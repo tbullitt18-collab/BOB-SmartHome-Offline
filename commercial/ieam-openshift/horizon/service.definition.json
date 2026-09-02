@@ -1,0 +1,67 @@
+{
+  "org": "bob-edge-systems",
+  "label": "BOB Physical Automation Platform",
+  "description": "Offline-First Physical Automation & Disaster Resiliency Engine for IBM Edge Application Manager",
+  "public": true,
+  "documentationUrl": "https://github.com/tbullitt18-collab/BOB-SmartHome-Offline",
+  "url": "io.bob-edge.platform",
+  "version": "1.0.0",
+  "arch": "amd64",
+  "sharable": "singleton",
+  "matchEngineVersion": ">= 0.0.1",
+  "requiredServices": [],
+  "userInput": [
+    {
+      "name": "BOB_LOG_LEVEL",
+      "label": "Log Verbosity Level",
+      "type": "string",
+      "defaultValue": "INFO"
+    },
+    {
+      "name": "BOB_STORM_MODE_ENABLED",
+      "label": "Enable Automated Storm Mode & Load Shedding",
+      "type": "boolean",
+      "defaultValue": "true"
+    },
+    {
+      "name": "BOB_OFFLINE_AUTONOMY_DAYS",
+      "label": "Maximum Consecutive Offline Edge Autonomy Days",
+      "type": "int",
+      "defaultValue": "30"
+    }
+  ],
+  "deployment": {
+    "services": {
+      "bob-core-engine": {
+        "image": "quay.io/bob-edge/platform-core:v1.0.0",
+        "privileged": true,
+        "environment": [
+          "BOB_ENVIRONMENT=production",
+          "BOB_PORT=8888",
+          "EMQX_HOST=emqx-cluster",
+          "EMQX_PORT=1883"
+        ],
+        "ports": [
+          {
+            "HostPort": "8888:8888/tcp",
+            "HostIP": "0.0.0.0"
+          }
+        ],
+        "binds": [
+          "/var/run/dbus:/var/run/dbus",
+          "/etc/bob/policies:/policies:ro",
+          "/var/log/bob/audit:/observability/audit_trail:rw"
+        ]
+      },
+      "bob-emqx-broker": {
+        "image": "emqx/emqx:5.3.0",
+        "ports": [
+          {
+            "HostPort": "1883:1883/tcp",
+            "HostIP": "0.0.0.0"
+          }
+        ]
+      }
+    }
+  }
+}
