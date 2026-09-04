@@ -1,0 +1,67 @@
+﻿{
+  "product_type": "mcp_server",
+  "license_type": "paid_listing",
+  "product_details": {
+    "display_name": "BOB Edge SmartHome & Grid Resilience",
+    "programmatic_name": "bob-smarthome-edge",
+    "description": "Offline-first smart building and microgrid edge automation platform powered by deterministic policy engines and Watson-class edge ML. Provides autonomous device orchestration, local load-shedding telemetry, and instant storm-mode perimeter defense without cloud dependencies.",
+    "version": "1.0.0",
+    "change_log": "v1.0.0 initial release: MCP tools for local device control, sensor telemetry streaming, storm-mode perimeter defense, and automated peak energy shedding."
+  },
+  "categorization": {
+    "domain_tags": ["Productivity", "Security", "Research"],
+    "language_support": ["English"],
+    "eccn": "EAR99",
+    "unspsc": "43232800"
+  },
+  "application": {
+    "application_name": "Todd Bullitt",
+    "application_id": "PENDING_APP_ID",
+    "icon": "commercial/partner-plus/bob_icon.svg"
+  },
+  "mcp_server_configuration": {
+    "endpoint_url": "https://edge.bob-smarthome.io/mcp",
+    "transport": "Streamable HTTP",
+    "supported_transports": ["Streamable HTTP", "SSE"],
+    "authentication_schema": "API Key",
+    "auth_header": "X-BOB-Edge-Key",
+    "test_connection_endpoint": "/health"
+  },
+  "pricing": {
+    "model": "Hybrid (Fixed + Usage-Based)",
+    "currency": "USD",
+    "plans": [
+      {
+        "id": "bob-edge-residential",
+        "name": "Residential Edge Node",
+        "type": "fixed",
+        "monthly_fee_usd": 29.00,
+        "included_events": 10000,
+        "overage_per_1000_events_usd": 0.50
+      },
+      {
+        "id": "bob-edge-commercial",
+        "name": "Commercial Building & Microgrid",
+        "type": "fixed",
+        "monthly_fee_usd": 149.00,
+        "included_events": 100000,
+        "overage_per_1000_events_usd": 0.25
+      }
+    ],
+    "metered_event_definitions": [
+      {
+        "metric_name": "Event",
+        "description": "Execution of an MCP tool run (device state actuation, sensor sampling, load shedding trigger, perimeter lock)."
+      }
+    ]
+  },
+  "related_links": {
+    "support": "https://github.com/tbullitt18-collab/BOB-SmartHome-Offline/issues",
+    "terms_and_conditions": "https://github.com/tbullitt18-collab/BOB-SmartHome-Offline/blob/main/LICENSE",
+    "documentation": "https://github.com/tbullitt18-collab/BOB-SmartHome-Offline/blob/main/README.md",
+    "demo": "https://github.com/tbullitt18-collab/BOB-SmartHome-Offline/blob/main/docs/screenshots/README.md"
+  },
+  "test_credentials": {
+    "note": "Temporary test environment credentials for IBM Ecosystem validation team provided upon APP_ID assignment."
+  }
+}
