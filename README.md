@@ -71,15 +71,19 @@ python scripts/analyze_casas.py path/to/casas_data.txt --sensor M003
 ---
 
 ## 📖 Extended Documentation & Commercialization
+- [**IBM Partner Plus "Build" Track Dossier**](commercial/partner-plus/PARTNER_PLUS_APPLICATION_DOSSIER.md): Complete, pre-filled submission responses aligned with IBM's 20 Technology Building Blocks and the *Build with Bob* initiative.
+- [**Electric Utility Executive Pitch One-Pager**](commercial/utilities-grid/UTILITY_PITCH_ONE_PAGER.md): Turnkey $45,000 feeder pilot proposal solving cold-load pickup transformer blowouts for power companies and cooperatives.
 - [**Commercial Portfolio & IBM Partner Strategy**](commercial/README.md): Full execution packages for IBM Partner Plus, Red Hat Marketplace, OpenShift/IEAM, and Utility pilots.
 - [**Developer Workflows & Physical DevOps Guide**](DEVELOPER_WORKFLOWS.md): Detailed deep-dive into event schemas, decision traces, and CI/CD replay.
 - [**Enterprise Scaling Architecture**](scale/ENTERPRISE_SCALING_GUIDE.md): K3s Kubernetes clustering and EMQX multi-broker scaling.
 - [**IBM Bob Utilization Statement**](IBM_Bob_Utilization_Statement.md): Official statement on how IBM Bob was utilized to generate code syntax.
-- [**Visual Architecture & Session Evidence**](docs/screenshots/README.md): High-resolution screenshots and session logs.
+- [**Visual Architecture & Session Evidence**](docs/screenshots/README.md): High-resolution screenshots, including live interactive command center runs and autonomous storm mode triggers.
 
 ---
 
-## 🏆 Hackathon Deliverables
+## 🏆 Hackathon & Enterprise Deliverables
+- **Live Local Command Center:** Runs 100% offline on `http://localhost:8888` via lightweight Python stdlib bridge.
 - **Demo Video (Cloned Voice Narration):** [`docs/BOB_Hackathon_Demo_Video.mp4`](docs/BOB_Hackathon_Demo_Video.mp4)
 - **Session Telemetry:** [`IBM_Bob_Session_Report.jsonl`](IBM_Bob_Session_Report.jsonl)
 - **Compliance Statement:** [`IBM_Bob_Utilization_Statement.md`](IBM_Bob_Utilization_Statement.md)
+

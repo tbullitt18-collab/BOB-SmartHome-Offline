@@ -55,3 +55,21 @@ This directory contains visual evidence of the **BOB Smart Home Offline Survival
   - `Dashboard UI`: Single-page dark mode UI and Python stdlib API bridge.
   - `Enterprise Architect`: Kubernetes manifests, EMQX clustering, and Nginx reverse proxy.
 - Rigorously tested under chaos load via `scripts/chaos_monkey.py` and `scripts/positive_stress_test.py` with 100% success rate.
+
+---
+
+## 6. Live Interactive Dashboard Verification (Normal Mode)
+![Live Command Center Normal](07_live_command_center_normal.png)
+- Interactive local execution on `http://localhost:8888` via lightweight Python stdlib server.
+- Verifies sub-second device state toggling (Bedroom light activated, dynamic power draw scaling to 1435W).
+- Real-time battery telemetry, climate monitors, and zero-CDN dark mode styling.
+
+---
+
+## 7. Autonomous Storm Mode & Emergency Perimeter Lockdown
+![Live Storm Mode Active](08_live_storm_mode_active.png)
+- Autonomous transition triggered via barometric drop or manual emergency command.
+- **Risk Level:** Dynamically escalated from LOW to CRITICAL ("Approaching in 2h 15m").
+- **Automatic Egress Security:** Front Door, Back Door, and Garage deadbolts secured simultaneously.
+- **BOB Brain Telemetry:** Emits structured real-time alert `[ALERT] Storm Mode engaged. Securing perimeter.`
+
