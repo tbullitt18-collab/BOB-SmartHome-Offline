@@ -63,10 +63,9 @@ jobs:
 
       - name: Install Red Hat OpenShift Preflight CLI
         run: |
-          PFLT_VERSION="v0.9.36"
           ARCH=$(uname -m | sed s/x86_64/amd64/)
-          PFLT_URL="https://github.com/redhat-openshift-ecosystem/openshift-preflight/releases/download/${PFLT_VERSION}/preflight-linux-${ARCH}"
-          curl -sLO "${PFLT_URL}"
+          PFLT_URL="https://github.com/redhat-openshift-ecosystem/openshift-preflight/releases/latest/download/preflight-linux-${ARCH}"
+          curl -sL "${PFLT_URL}" -o "preflight-linux-${ARCH}"
           chmod +x "preflight-linux-${ARCH}"
           sudo mv "preflight-linux-${ARCH}" /usr/local/bin/preflight
           preflight --version
