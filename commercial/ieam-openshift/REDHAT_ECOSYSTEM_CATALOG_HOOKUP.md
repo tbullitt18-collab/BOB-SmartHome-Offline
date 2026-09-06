@@ -36,10 +36,13 @@ The **Red Hat Ecosystem Catalog** and **OpenShift OperatorHub** provide enterpri
 
 ## 2. Red Hat Partner Connect Portal Setup
 
-### Step 2.1: Access Partner Connect
-1. Navigate to [partnerconnect.redhat.com](https://partnerconnect.redhat.com).
-2. Sign in with the enterprise Red Hat Business Partner credentials.
-3. If not already registered, select **Join Red Hat Partner Connect** as a **Technology Partner** (free tier for ISVs).
+### Step 2.1: Access Partner Connect & Enrollment Status
+1. **Enrollment Status:** **SUBMITTED & IN REVIEW** (RHPP Build Module / ISV Track).
+   * **Applicant:** Todd Bullitt (`tbullitt18@gmail.com`)
+   * **Company Entity:** `BOB Edge Systems`
+   * **Program Track:** Red Hat Partner Program - **Build Module** (Validation & Certification of Software / Operators on OpenShift & RHEL)
+   * **Submission Confirmation:** Form submitted via Red Hat CRM Partner Onboarding portal. Application pending vetting review.
+2. Portal Dashboard: [connect.redhat.com](https://connect.redhat.com).
 
 ### Step 2.2: Create Operator Certification Project
 1. In the Partner Connect dashboard, click **Certification Zones** > **Container & Operator Projects**.
