@@ -61,9 +61,33 @@ def test_operator_bundle():
     assert spec.get("installModes"), "CSV missing installModes"
     assert spec.get("customresourcedefinitions", {}).get("owned"), "CSV missing owned CRDs"
     
+    VALID_CATEGORIES = {
+        "AI/Machine Learning", "Application Runtime", "Big Data", "Cloud Provider",
+        "Developer Tools", "Database", "Integration & Delivery", "Logging & Tracing",
+        "Monitoring", "Modernization & Migration", "Networking", "OpenShift Optional",
+        "Security", "Storage", "Streaming & Messaging", "Observability"
+    }
+    categories = [c.strip() for c in csv_data.get("metadata", {}).get("annotations", {}).get("categories", "").split(",") if c.strip()]
+    assert len(categories) > 0, "CSV missing categories annotation"
+    for cat in categories:
+        assert cat in VALID_CATEGORIES, f"Invalid category '{cat}'. Must be one of standard categories: {VALID_CATEGORIES}"
+    
+    assert spec.get("icon") and len(spec.get("icon")) == 1, "CSV must have exactly 1 icon defined in spec.icon"
+    assert spec.get("icon")[0].get("base64data"), "CSV icon missing base64data"
+    assert spec.get("icon")[0].get("mediatype") in ["image/svg+xml", "image/png"], "CSV icon must be svg or png"
+    
+    assert spec.get("keywords") and len(spec.get("keywords")) > 0, "CSV must define spec.keywords"
+    
+    owned_crds_def = spec.get("customresourcedefinitions", {}).get("owned", [])
+    for oc in owned_crds_def:
+        assert oc.get("resources") and len(oc.get("resources")) > 0, f"Owned CRD {oc.get('name')} missing resources list"
+    
     print(f"   ✓ Display Name: {spec.get('displayName')}")
     print(f"   ✓ Operator Version: {spec.get('version')}")
     print(f"   ✓ Capabilities: {csv_data.get('metadata', {}).get('annotations', {}).get('capabilities')}")
+    print(f"   ✓ Standard Categories: {categories}")
+    print(f"   ✓ Keywords: {spec.get('keywords')}")
+    print(f"   ✓ Icon verified ({spec.get('icon')[0].get('mediatype')})")
 
     # 4. Validate CRD Match
     print("\n[4/5] Validating CustomResourceDefinition (CRD) Alignment...")

@@ -5,7 +5,7 @@ metadata:
   namespace: placeholder
   annotations:
     capabilities: "Full Lifecycle"
-    categories: "Edge Computing, IoT, Disaster Recovery, Infrastructure"
+    categories: "AI/Machine Learning, Integration & Delivery, Security, Monitoring"
     certified: "true"
     containerImage: quay.io/bob-edge/operator:v1.0.0
     createdAt: "2026-09-06T10:00:00Z"
@@ -50,6 +50,15 @@ spec:
   version: 1.0.0
   maturity: stable
   minKubeVersion: "1.26.0"
+  keywords:
+    - "edge"
+    - "offline-first"
+    - "disaster-recovery"
+    - "smart-home"
+    - "microgrid"
+  icon:
+    - base64data: PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0NSIgZmlsbD0iIzBkMTExNyIgc3Ryb2tlPSIjMDBmZjg4IiBzdHJva2Utd2lkdGg9IjUiLz48dGV4dCB4PSI1MCIgeT0iNjAiIGZvbnQtc2l6ZT0iMzUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iIzAwZmY4OCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+Qk9CPC90ZXh0Pjwvc3ZnPg==
+      mediatype: image/svg+xml
   provider:
     name: "BOB Edge Systems"
     url: "https://github.com/tbullitt18-collab/BOB-SmartHome-Offline"
@@ -124,3 +133,10 @@ spec:
         kind: BobEdgeDeployment
         displayName: "BOB Edge Deployment"
         description: "Manages a cluster of offline physical automation engines, ML models, and audit logs."
+        resources:
+          - kind: Deployment
+            version: apps/v1
+          - kind: Service
+            version: v1
+          - kind: ConfigMap
+            version: v1

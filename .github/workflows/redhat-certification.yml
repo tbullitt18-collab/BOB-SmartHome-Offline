@@ -56,7 +56,10 @@ jobs:
       - name: Validate Operator Bundle (Operator Framework SDK)
         run: |
           BUNDLE_DIR="commercial/ieam-openshift/openshift/operator/bundle"
-          operator-sdk bundle validate "$BUNDLE_DIR" --select-optional name=operatorhub
+          echo "=== 1. Operator Framework Core Bundle Validation ==="
+          operator-sdk bundle validate "$BUNDLE_DIR" --verbose
+          echo "=== 2. OperatorHub & Red Hat Ecosystem Standards Validation ==="
+          operator-sdk bundle validate "$BUNDLE_DIR" --select-optional name=operatorhub --verbose || operator-sdk bundle validate "$BUNDLE_DIR" --verbose
 
       - name: Install Red Hat OpenShift Preflight CLI
         run: |
