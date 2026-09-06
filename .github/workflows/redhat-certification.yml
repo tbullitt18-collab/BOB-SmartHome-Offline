@@ -5,13 +5,13 @@ on:
     branches: [ main ]
     paths:
       - 'commercial/ieam-openshift/**'
-      - 'scripts/verify_redhat_operator.py'
+      - 'scripts/**'
       - '.github/workflows/redhat-certification.yml'
   pull_request:
     branches: [ main ]
     paths:
       - 'commercial/ieam-openshift/**'
-      - 'scripts/verify_redhat_operator.py'
+      - 'scripts/**'
       - '.github/workflows/redhat-certification.yml'
   workflow_dispatch:
 
@@ -71,32 +71,8 @@ jobs:
           preflight --version
 
       - name: Run Red Hat Preflight Static Policy Audit
-        env:
-          BUNDLE_PATH: "commercial/ieam-openshift/openshift/operator/bundle"
         run: |
-          echo "Auditing Red Hat Certified Operator security constraints..."
-          # Verify annotations.yaml compliance
-          python -c '
-          import yaml, sys
-          with open("commercial/ieam-openshift/openshift/operator/bundle/metadata/annotations.yaml") as f:
-              data = yaml.safe_load(f)["annotations"]
-          assert data.get("com.redhat.openshift.versions") == "v4.12-v4.17", "Invalid OpenShift version range"
-          assert data.get("com.redhat.delivery.operator.bundle") == "true", "Missing bundle delivery flag"
-          print("✓ Red Hat Ecosystem annotations validated.")
-          '
-          # Verify ClusterServiceVersion securityContext constraints
-          python -c '
-          import yaml, sys
-          with open("commercial/ieam-openshift/openshift/operator/bundle/manifests/bob-edge-operator.clusterserviceversion.yaml") as f:
-              csv = yaml.safe_load(f)
-          deployments = csv["spec"]["install"]["spec"]["deployments"]
-          for d in deployments:
-              for c in d["spec"]["template"]["spec"]["containers"]:
-                  sec = c.get("securityContext", {})
-                  assert sec.get("allowPrivilegeEscalation") is False, f"Privilege escalation allowed in {c[\"name\"]}"
-                  assert sec.get("runAsNonRoot") is True, f"NonRoot not enforced in {c[\"name\"]}"
-          print("✓ OpenShift restricted-v2 SecurityContextConstraints (SCC) fully satisfied.")
-          '
+          python scripts/verify_preflight_policy.py
 
       - name: Summary & Certification Signoff
         run: |
