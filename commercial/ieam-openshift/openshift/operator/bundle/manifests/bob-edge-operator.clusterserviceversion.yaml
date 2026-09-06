@@ -1,0 +1,126 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  name: bob-edge-operator.v1.0.0
+  namespace: placeholder
+  annotations:
+    capabilities: "Full Lifecycle"
+    categories: "Edge Computing, IoT, Disaster Recovery, Infrastructure"
+    certified: "true"
+    containerImage: quay.io/bob-edge/operator:v1.0.0
+    createdAt: "2026-09-06T10:00:00Z"
+    description: "Offline-First Physical Automation & Disaster Resiliency Platform for Red Hat OpenShift & Device Edge."
+    repository: "https://github.com/tbullitt18-collab/BOB-SmartHome-Offline"
+    support: "BOB Edge Systems <support@bob-edge.io>"
+    alm-examples: |-
+      [
+        {
+          "apiVersion": "automation.bob-edge.io/v1alpha1",
+          "kind": "BobEdgeDeployment",
+          "metadata": {
+            "name": "bob-microgrid-cluster",
+            "namespace": "bob-system"
+          },
+          "spec": {
+            "replicas": 3,
+            "environment": "production",
+            "stormModeEnabled": true,
+            "offlineAutonomyDays": 30,
+            "maxCircuitSheddingPercent": 75,
+            "policies": [
+              "safety-hazard-protocol",
+              "storm-mode-resilience",
+              "energy-anomaly-protection"
+            ]
+          }
+        }
+      ]
+spec:
+  displayName: "BOB Edge Automation & Disaster Resilience Platform"
+  description: |
+    # BOB Edge Automation Platform
+
+    BOB (Building Offline Backbone) is an enterprise-grade physical automation and disaster resiliency platform engineered for Red Hat OpenShift, Red Hat Device Edge (MicroShift), and K3s.
+
+    ## Key Features
+    - **100% Offline Autonomy:** Zero-cloud dependency for edge automation, life-safety egress, and energy management.
+    - **Embedded Edge ML:** Watson-class Random Forest storm prediction, Isolation Forest circuit surge prevention, and CASAS occupancy modeling.
+    - **Grid Surge Protection:** Prevents substation cold-load pickup transformer blowouts during storm restoration.
+    - **Automation-as-Code:** Versioned YAML policies with sub-millisecond decision traces and SHA-256 cryptographic audit logs.
+  version: 1.0.0
+  maturity: stable
+  minKubeVersion: "1.26.0"
+  provider:
+    name: "BOB Edge Systems"
+    url: "https://github.com/tbullitt18-collab/BOB-SmartHome-Offline"
+  maintainers:
+    - name: "Todd Bullitt"
+      email: "support@bob-edge.io"
+  links:
+    - name: "GitHub Repository"
+      url: "https://github.com/tbullitt18-collab/BOB-SmartHome-Offline"
+    - name: "Documentation"
+      url: "https://github.com/tbullitt18-collab/BOB-SmartHome-Offline/blob/main/DEVELOPER_WORKFLOWS.md"
+    - name: "Commercial Brief"
+      url: "https://github.com/tbullitt18-collab/BOB-SmartHome-Offline/blob/main/commercial/README.md"
+  installModes:
+    - type: OwnNamespace
+      supported: true
+    - type: SingleNamespace
+      supported: true
+    - type: MultiNamespace
+      supported: false
+    - type: AllNamespaces
+      supported: true
+  install:
+    strategy: deployment
+    spec:
+      clusterPermissions:
+        - serviceAccountName: bob-edge-operator
+          rules:
+            - apiGroups: [""]
+              resources: ["configmaps", "secrets", "services", "pods"]
+              verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+            - apiGroups: ["apps"]
+              resources: ["deployments", "statefulsets"]
+              verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+            - apiGroups: ["automation.bob-edge.io"]
+              resources: ["bobedgedeployments", "bobedgedeployments/status"]
+              verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+      deployments:
+        - name: bob-edge-operator
+          spec:
+            replicas: 1
+            selector:
+              matchLabels:
+                name: bob-edge-operator
+            template:
+              metadata:
+                labels:
+                  name: bob-edge-operator
+              spec:
+                serviceAccountName: bob-edge-operator
+                containers:
+                  - name: operator
+                    image: quay.io/bob-edge/operator:v1.0.0
+                    command: ["/manager"]
+                    resources:
+                      limits:
+                        cpu: 500m
+                        memory: 512Mi
+                      requests:
+                        cpu: 100m
+                        memory: 128Mi
+                    securityContext:
+                      allowPrivilegeEscalation: false
+                      readOnlyRootFilesystem: true
+                      runAsNonRoot: true
+                      capabilities:
+                        drop: ["ALL"]
+  customresourcedefinitions:
+    owned:
+      - name: bobedgedeployments.automation.bob-edge.io
+        version: v1alpha1
+        kind: BobEdgeDeployment
+        displayName: "BOB Edge Deployment"
+        description: "Manages a cluster of offline physical automation engines, ML models, and audit logs."

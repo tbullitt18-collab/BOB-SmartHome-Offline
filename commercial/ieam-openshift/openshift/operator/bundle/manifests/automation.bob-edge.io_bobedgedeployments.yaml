@@ -1,0 +1,77 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: bobedgedeployments.automation.bob-edge.io
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.14.0
+    operators.operatorframework.io/installed-alongside: "bob-edge-operator.v1.0.0"
+spec:
+  group: automation.bob-edge.io
+  names:
+    kind: BobEdgeDeployment
+    listKind: BobEdgeDeploymentList
+    plural: bobedgedeployments
+    singular: bobedgedeployment
+    shortNames:
+      - bobedge
+  scope: Namespaced
+  versions:
+    - name: v1alpha1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          description: BobEdgeDeployment manages physical edge automation and disaster resiliency for buildings and microgrids.
+          properties:
+            spec:
+              type: object
+              required:
+                - environment
+              properties:
+                replicas:
+                  type: integer
+                  minimum: 1
+                  default: 3
+                  description: Number of high-availability edge engine replicas.
+                environment:
+                  type: string
+                  enum: ["dev", "staging", "production"]
+                  default: "production"
+                  description: Deployment target profile.
+                stormModeEnabled:
+                  type: boolean
+                  default: true
+                  description: Autonomous transition to storm load-shedding upon loss of grid power.
+                offlineAutonomyDays:
+                  type: integer
+                  default: 30
+                  description: Maximum continuous days of zero-cloud offline operation.
+                maxCircuitSheddingPercent:
+                  type: integer
+                  minimum: 10
+                  maximum: 90
+                  default: 75
+                  description: Maximum proportion of non-critical loads eligible for shedding.
+                policies:
+                  type: array
+                  items:
+                    type: string
+                  description: List of active versioned policy IDs.
+            status:
+              type: object
+              properties:
+                readyNodes:
+                  type: integer
+                  description: Number of active edge nodes currently in healthy state.
+                gridStatus:
+                  type: string
+                  description: Live status of municipal grid (ONLINE / OFFLINE / ISLANDED).
+                currentPowerDrawWatts:
+                  type: number
+                  description: Real-time aggregated circuit power draw across the facility.
+                auditChainVerified:
+                  type: boolean
+                  description: Cryptographic integrity status of the local append-only audit trail.
+      subresources:
+        status: {}
