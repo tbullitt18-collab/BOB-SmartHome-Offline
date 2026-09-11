@@ -1,6 +1,4 @@
-import os
-
-html_content = """<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -76,12 +74,4 @@ html_content = """<!DOCTYPE html>
         &copy; 2026 ASCE Technologies, LLC. All rights reserved. | <a href="https://ascetech.org" style="color: #8b949e;">ascetech.org</a>
     </footer>
 </body>
-</html>"""
-
-os.makedirs("commercial/corporate", exist_ok=True)
-with open("commercial/corporate/ASCE_TECHNOLOGY_LANDING_PAGE.html", "w", encoding="utf-8") as f:
-    f.write(html_content)
-
-print("Created commercial/corporate/ASCE_TECHNOLOGY_LANDING_PAGE.html successfully.")
-
-
+</html>
