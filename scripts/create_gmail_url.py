@@ -1,87 +1,58 @@
-import os
+import urllib.parse
 
-html_content = """<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ASCE Technologies, LLC | Enterprise Edge Automation &amp; Disaster Resilience</title>
-    <style>
-        :root { --redhat-red: #ee0000; --dark-bg: #0d1117; --card-bg: #161b22; --text-main: #c9d1d9; --accent: #58a6ff; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: var(--dark-bg); color: var(--text-main); margin: 0; padding: 0; line-height: 1.6; }
-        header { background-color: #161b22; border-bottom: 1px solid #30363d; padding: 2rem 10%; display: flex; justify-content: space-between; align-items: center; }
-        h1 { margin: 0; color: #ffffff; font-size: 1.8rem; font-weight: 700; }
-        .badge { background-color: var(--redhat-red); color: white; padding: 0.3rem 0.8rem; border-radius: 4px; font-weight: 600; font-size: 0.85rem; display: inline-block; }
-        .container { max-width: 1100px; margin: 3rem auto; padding: 0 1.5rem; }
-        .hero { background: linear-gradient(135deg, #1f2937 0%, #111827 100%); border: 1px solid #30363d; border-radius: 12px; padding: 2.5rem; margin-bottom: 3rem; }
-        .hero h2 { color: #ffffff; margin-top: 0; font-size: 2.2rem; }
-        .hero p { font-size: 1.15rem; color: #8b949e; max-width: 800px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
-        .card { background: var(--card-bg); border: 1px solid #30363d; border-radius: 8px; padding: 1.5rem; }
-        .card h3 { color: #58a6ff; margin-top: 0; }
-        ul { padding-left: 1.2rem; }
-        li { margin-bottom: 0.5rem; }
-        .cta-btn { display: inline-block; background-color: #238636; color: white; padding: 0.8rem 1.5rem; border-radius: 6px; text-decoration: none; font-weight: 600; margin-top: 1rem; }
-        footer { border-top: 1px solid #30363d; text-align: center; padding: 2rem; color: #8b949e; font-size: 0.9rem; }
-    </style>
-</head>
-<body>
-    <header>
-        <div>
-            <h1>ASCE Technologies, LLC</h1>
-            <span style="color: #8b949e; font-size: 0.9rem;">Enterprise Division • BOB Edge Systems</span>
-        </div>
-        <div class="badge">Red Hat Ecosystem Partner Applicant</div>
-    </header>
+to_email = "rmathur@redhat.com"
+subject = "Re: Red Hat Partner Application - ASCE Technologies, LLC"
 
-    <div class="container">
-        <section class="hero">
-            <h2>Edge-Native Microgrid &amp; Smart Home Disaster Resilience</h2>
-            <p>ASCE Technologies develops enterprise-grade edge automation tools designed to operate 100% autonomously during utility blackouts, ISP failures, and severe weather events. Engineered for OpenShift, Kubernetes, and IEAM deployment.</p>
-            <a href="https://github.com/tbullitt18-collab/BOB-SmartHome-Offline" class="cta-btn" target="_blank">Explore OpenShift Operator Repository &rarr;</a>
-        </section>
+body = """Dear Rahul,
 
-        <div class="grid">
-            <div class="card">
-                <h3>🔴 OpenShift Operator</h3>
-                <p><strong>bob-edge-operator</strong> (v1.0.0)</p>
-                <ul>
-                    <li>OpenShift 4.12 - 4.17 Certified Preflight Compatible</li>
-                    <li>Restricted-v2 Security Context Constraints (SCC)</li>
-                    <li>Automated edge sync &amp; disaster failover</li>
-                </ul>
-            </div>
-            <div class="card">
-                <h3>⚡ Utility Grid Inrush Governor</h3>
-                <p><strong>Cold-Load Pickup Mitigation</strong></p>
-                <ul>
-                    <li>-78.0% peak transformer inrush reduction</li>
-                    <li>Staggered local load re-engagement</li>
-                    <li>Zero cloud dependency during storm outages</li>
-                </ul>
-            </div>
-            <div class="card">
-                <h3>🛡️ Corporate Details</h3>
-                <p><strong>ASCE Technologies, LLC</strong></p>
-                <ul>
-                    <li><strong>State:</strong> Georgia, USA</li>
-                    <li><strong>Primary Email:</strong> t.bullitt@ascetech.org</li>
-                    <li><strong>Managing Director:</strong> Todd Bullitt</li>
-                </ul>
-            </div>
-        </div>
-    </div>
+Thank you for following up.
 
-    <footer>
-        &copy; 2026 ASCE Technologies, LLC. All rights reserved. | <a href="https://ascetech.org" style="color: #8b949e;">ascetech.org</a>
-    </footer>
-</body>
-</html>"""
+ASCE Technologies, LLC is a technology development firm registered in Georgia, USA. Our root web domain (https://ascetech.org) hosts our public sector navigational tools, while our enterprise software division—BOB Edge Systems—manages our edge automation and OpenShift disaster-resilience product line.
 
-os.makedirs("commercial/corporate", exist_ok=True)
-with open("commercial/corporate/ASCE_TECHNOLOGY_LANDING_PAGE.html", "w", encoding="utf-8") as f:
-    f.write(html_content)
+We have published our official enterprise technology showcase and company verification page on our domain at:
+👉 https://ascetech.org/technology
 
-print("Created commercial/corporate/ASCE_TECHNOLOGY_LANDING_PAGE.html successfully.")
+To review our full open-source architecture, engineering benchmarks, and OpenShift operator bundle submitted for the Red Hat Ecosystem Catalog, please refer to our primary software repository:
+• Corporate Repository & OpenShift Operator Suite:
+  https://github.com/tbullitt18-collab/BOB-SmartHome-Offline
+
+• Verified Business Details:
+  - Legal Entity Name: ASCE Technologies, LLC
+  - Technology Portal: https://ascetech.org/technology
+  - Business Email: t.bullitt@ascetech.org
+  - Primary Contact: Todd Bullitt, Managing Director & Founder
+  - State of Registration: Georgia, United States
+  - Product Line: BOB Edge Automation & Disaster Resilience Platform (bob-edge-operator)
+
+If you require our Georgia Secretary of State registration certificate, W-9, or EIN documentation to complete the partner review, please let me know and I will provide them immediately.
+
+Thank you for updating the application and continuing the partner-review process.
+
+Sincerely,
+
+Todd Bullitt
+Managing Director & Founder
+ASCE Technologies, LLC
+t.bullitt@ascetech.org
+https://ascetech.org
+"""
+
+params = {
+    "view": "cm",
+    "fs": "1",
+    "to": to_email,
+    "su": subject,
+    "body": body
+}
+
+gmail_url = "https://mail.google.com/mail/?" + urllib.parse.urlencode(params)
+mailto_url = f"mailto:{to_email}?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(body)}"
+
+print(f"Gmail URL: {gmail_url}")
+print(f"\nMailto URL: {mailto_url}")
+
+with open("redhat_reply_links.txt", "w", encoding="utf-8") as f:
+    f.write(f"GMAIL_URL:\n{gmail_url}\n\nMAILTO_URL:\n{mailto_url}\n")
+
 
 
