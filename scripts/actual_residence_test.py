@@ -2,6 +2,10 @@ import sys
 import os
 from datetime import datetime, timedelta
 
+if hasattr(sys.stdout, "reconfigure"):
+    try: sys.stdout.reconfigure(encoding="utf-8")
+    except Exception: pass
+
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'ai'))
 from occupancy_learner import OccupancyLearner
 

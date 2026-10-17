@@ -1,6 +1,11 @@
 import urllib.request
 import time
 import threading
+import sys
+
+if hasattr(sys.stdout, "reconfigure"):
+    try: sys.stdout.reconfigure(encoding="utf-8")
+    except Exception: pass
 
 SUCCESS_COUNT = 0
 TOTAL_REQUESTS = 500

@@ -470,9 +470,9 @@
             <h2>QUICK ACTIONS</h2>
             <div class="quick-actions">
                 <button class="action-btn btn-storm" id="btn-storm" onclick="toggleStormMode()">STORM MODE OFF</button>
-                <button class="action-btn btn-lights" onclick="allLights(true)">ALL LIGHTS ON</button>
-                <button class="action-btn btn-locks" onclick="allLocks(true)">SECURE LOCKS</button>
-                <button class="action-btn btn-alert" onclick="alert('EMERGENCY BROADCAST SENT TO LOCAL NETWORK')">EMERGENCY ALERT</button>
+                <button class="action-btn btn-lights" onclick="triggerPhysicalRelay(false)" style="background-color: var(--danger-red); color: #fff;">SHED RELAY (OFF)</button>
+                <button class="action-btn btn-locks" onclick="triggerPhysicalRelay(true)">RESTORE RELAY (ON)</button>
+                <button class="action-btn btn-alert" onclick="toggleStormMode()">SIMULATE GRID BLACKOUT (AUTO-SHED)</button>
             </div>
         </div>
 
@@ -491,14 +491,31 @@
         setInterval(updateClock, 1000);
         updateClock();
 
+        async function triggerPhysicalRelay(turnOn) {
+            const endpoint = turnOn ? '/api/wiz/on' : '/api/wiz/off';
+            addAiLog(turnOn
+                ? '[UDP 38899] Restoring physical relay at 192.168.0.114 (cc4085c58c2c)...'
+                : '[UDP 38899] Firing offline load-shed packet -> 192.168.0.114...');
+            try {
+                const res = await fetch(endpoint, { method: 'POST' });
+                const data = await res.json();
+                document.getElementById('total-pwr').innerText = data.power.total_w + ' W';
+                addAiLog(`[HARDWARE ACK] ESP25_SOCKET_01 (${data.relay_ip}) state=${turnOn ? 'ON' : 'OFF'} OK`);
+            } catch (err) {
+                addAiLog('[ERROR] Local API bridge unreachable: ' + err);
+            }
+        }
+
         // UI Interactions
         function toggleLight(btn) {
             if (btn.classList.contains('on')) {
                 btn.classList.remove('on');
                 btn.innerText = 'OFF';
+                triggerPhysicalRelay(false);
             } else {
                 btn.classList.add('on');
                 btn.innerText = 'ON';
+                triggerPhysicalRelay(true);
             }
         }
 
@@ -560,10 +577,11 @@
                 riskText.className = 'text-red';
                 riskBadge.innerText = 'CRITICAL';
                 riskBadge.className = 'text-red';
-                countdown.innerText = 'Approaching in 2h 15m';
+                countdown.innerText = 'GRID FAILURE - ISLAND MODE';
                 countdown.style.color = 'var(--danger-red)';
-                addAiLog('[ALERT] Storm Mode engaged. Securing perimeter.');
+                addAiLog('[ALERT] Grid Drop Detected! Autonomous Load Shedding engaged.');
                 allLocks(true);
+                triggerPhysicalRelay(false);
             } else {
                 header.classList.remove('storm-mode');
                 btn.innerText = 'STORM MODE OFF';
@@ -575,7 +593,8 @@
                 riskBadge.className = 'text-green';
                 countdown.innerText = 'No active alerts';
                 countdown.style.color = 'inherit';
-                addAiLog('[INFO] Storm Mode disengaged.');
+                addAiLog('[INFO] Grid Restored. Cold-Load Staggering complete.');
+                triggerPhysicalRelay(true);
             }
         }
 

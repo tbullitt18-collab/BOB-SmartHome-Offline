@@ -1,3 +1,5 @@
+SIMULATION RESULTS — no physical hardware tested
+==================================================
 # Substation Feeder Inrush & Cold-Load Pickup Benchmark Results
 
 **Simulation Platform:** BOB Autonomous Edge Grid Governor  
@@ -111,3 +113,4 @@ The benchmark simulator is self-contained and reproducible on any Python 3.8+ sy
 # Execute the simulation
 python commercial/utilities-grid/simulators/feeder_inrush_simulation.py
 ```
+

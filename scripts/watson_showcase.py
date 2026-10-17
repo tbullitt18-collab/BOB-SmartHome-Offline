@@ -4,6 +4,12 @@ import time
 import urllib.request
 import json
 
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'ai'))
 from storm_predictor import StormPredictor
 from anomaly_detector import DeviceAnomalyDetector

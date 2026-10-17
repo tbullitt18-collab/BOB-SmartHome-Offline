@@ -66,7 +66,11 @@ def verify_preflight():
                 f"Container '{c_name}' must have allowPrivilegeEscalation: false"
             assert sec_ctx.get("runAsNonRoot") is True, \
                 f"Container '{c_name}' must have runAsNonRoot: true"
-            print(f"   [OK] Deployment '{dep_name}' / Container '{c_name}': allowPrivilegeEscalation=False, runAsNonRoot=True")
+            assert sec_ctx.get("readOnlyRootFilesystem") is True, \
+                f"Container '{c_name}' must have readOnlyRootFilesystem: true"
+            assert "ALL" in sec_ctx.get("capabilities", {}).get("drop", []), \
+                f"Container '{c_name}' must drop ALL capabilities"
+            print(f"   [OK] Deployment '{dep_name}' / Container '{c_name}': allowPrivilegeEscalation=False, runAsNonRoot=True, readOnlyRootFilesystem=True, drop=ALL")
             checked_containers += 1
 
     assert checked_containers > 0, "No containers were verified"
