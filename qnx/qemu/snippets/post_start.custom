@@ -1,0 +1,5 @@
+# Start ASCE Safety Arbiter QNX Resource Manager at boot (elevates SCHED_FIFO prio=20,
+# attaches /dev/asce_arbiter, then drops to unprivileged uid=1001:gid=1001 and locks abilities)
+echo "---> Starting ASCE QNX Resource Manager (/dev/asce_arbiter)"
+/data/home/root/asce_arbiterd -U 1001:1001 -d
+waitfor /dev/asce_arbiter 3

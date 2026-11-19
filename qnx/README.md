@@ -1,32 +1,37 @@
 # ASCE Deterministic Safety Core — QNX OS 8.0
 
-Native C port of the deterministic cyber-physical safety arbiter from **BOB Offline** and **AquaPulse OS** targeting **QNX OS 8.0** (QNX Everywhere / QNX SDP 8.0).
+Native C99 cyber-physical safety arbiter, **QNX Resource Manager daemon (`/dev/asce_arbiter`)**, and multi-process IPC pipeline ported from **BOB Offline** and **AquaPulse OS** for **QNX OS 8.0** (QNX Everywhere / QNX SDP 8.0).
 
-## Architecture (3-Process QNX IPC Pipeline)
+## Architecture (Microkernel + Resource Manager + Native IPC)
 
-```
-  [Sensor Process] ──(MsgSend safety_req_t)──▶ [Arbiter Process (SCHED_FIFO prio=20)]
-         │                                                   │
-         │ ◀────────────(MsgReply safety_rep_t + SHA-256)────┘
-         │
-         └──(MsgSend actuator_cmd_t)────────▶ [Actuator Process]
-                                                └─ verifies SHA-256 receipt & verdict before actuation
-```
+1. **QNX Resource Manager Service (`src/resmgr.c` -> `asce_arbiterd`)**
+   - Publishes **`/dev/asce_arbiter`** via `dispatch_create()`, `iofunc_func_init()`, `iofunc_attr_init()`, and `resmgr_attach()` (`_FTYPE_ANY`).
+   - **Real-Time & Pulse Watchdog:** Elevates to **`SCHED_FIFO` priority 20** and attaches a `500 ms` `CLOCK_MONOTONIC` kernel timer (`SIGEV_PULSE_INIT` + `pulse_attach()` + `message_connect()`).
+   - **Least-Privilege Microkernel Hardening:** Before servicing untrusted clients, locks down capabilities via `procmgr_ability()` (`PROCMGR_AOP_DENY | PROCMGR_AOP_LOCK` on `PROCMGR_AID_SPAWN`, `PROCMGR_AID_FORK`, `PROCMGR_AID_REBOOT`, `PROCMGR_AID_PATHSPACE`, `PROCMGR_AID_MEM_SPECIAL`) and drops root privileges to unprivileged **`uid=1001 gid=1001`**.
+   - **Kernel-Authenticated Caller Auditing:** Inspects caller `(pid, euid)` using `iofunc_client_info_ext()` on every write and `devctl()`.
+   - **Dual Interface:**
+     - **POSIX VFS (`read` / `write`):** Supports `echo "bypass=0" > /dev/asce_arbiter`, `echo "start=all" > /dev/asce_arbiter`, `echo "shed=medical_oxygen_conc" > /dev/asce_arbiter` (returns `EACCES`), and `cat /dev/asce_arbiter`.
+     - **Binary `devctl()` (`src/asce_devctl.h`):** `DCMD_ASCE_EVAL` (`__DIOTF`) and `DCMD_ASCE_STATS` (`__DIOF`) evaluated by decoupled external clients (`src/client.c` -> `asce_ctl`).
 
-- **Sensor process**: Emits hydraulic isolation requests, post-outage motor cold-load startup masks, and load-shed commands over QNX synchronous message passing.
-- **Safety-arbiter process (`SCHED_FIFO`, priority `20`)**:
-  1. **EPA 20 PSI Hydraulic Interlock (`MSG_HYDRAULIC`)**: Evaluates downstream hospital junction `J-42` pressure (`hydraulic_predict_psi`). Unmitigated direct isolation (`0%` bypass) predicts `16.20 PSI` (`< 20.0 PSI`), so the arbiter overrides with `APPROVED_MODIFIED` + `25.0%` `PRV-3` bypass (`98.62 PSI`).
-  2. **NEC Cold-Load Inrush Governor (`MSG_START_LOADS`)**: Orders enabled inductive loads by descending excess inrush (`inrush - run`) and spaces starts by `500 ms` steps (`1500 ms` total for 4 loads), bounding peak startup current from `89.0 A` simultaneous down to `50.0 A` (`<= BREAKER_LIMIT_AMPS`).
-  3. **Life-Safety Load-Shed Firewall (`MSG_SHED_LOAD`)**: Deterministically rejects (`DEC_REJECTED`) load-shedding targeting protected medical equipment (`medical_oxygen_conc`).
-  4. **Cryptographic Audit Receipt**: Computes an in-process FIPS 180-4 SHA-256 digest (`sha256.c`) over every decision tuple.
-- **Actuator process**: Independently recomputes and verifies the arbiter's SHA-256 receipt and verdict before executing physical stagger delays or reporting actuation.
-
-When compiled with `qcc` (`__QNX__`), [`src/ipc.c`](src/ipc.c) binds directly to `<sys/neutrino.h>` (`ChannelCreate`, `ConnectAttach`, `MsgSend`, `MsgReceive`, `MsgReply`). On non-QNX POSIX hosts (`#ifndef __QNX__`), a `pthread`/shared-memory shim allows compiling and unit-testing the state machine on Linux (`make test-host`).
+2. **Decoupled 3-Process Synchronous IPC Core (`src/main.c` + `src/ipc.c` -> `asce_safety_core`)**
+   ```text
+     [Sensor Process] ──(MsgSend safety_req_t)──▶ [Arbiter Process (SCHED_FIFO prio=20)]
+            │                                                   │
+            │ ◀────────────(MsgReply safety_rep_t + SHA-256)────┘
+            │
+            └──(MsgSend actuator_cmd_t)────────▶ [Actuator Process]
+                                                   └─ verifies SHA-256 receipt & verdict before actuation
+   ```
+   - Uses `<sys/neutrino.h>` (`ChannelCreate`, `ConnectAttach`, `MsgSend`, `MsgReceive`, `MsgReply`) when compiled with `qcc` (`__QNX__`).
+   - Enforces three deterministic invariants (`src/safety.c`, `src/sha256.c`):
+     1. **EPA 20 PSI Hydraulic Interlock (`MSG_HYDRAULIC`):** Intercepts `0.0%` bypass at `16.20 PSI` (`< 20.0 PSI`) and enforces `APPROVED_MODIFIED` (`25.0%` PRV-3 bypass → `98.62 PSI` at `St. Jude J-42`).
+     2. **NEC Cold-Load Inrush Governor (`MSG_START_LOADS`):** Orders motors by descending excess inrush (`inrush - run`) and staggers across `4` steps (`1500 ms`), bounding `89.0 A` simultaneous inrush to `50.0 A`.
+     3. **Life-Safety Firewall (`MSG_SHED_LOAD`):** Deterministically rejects (`DEC_REJECTED` / `EACCES`) load shedding targeting `medical_oxygen_conc`.
 
 ## Pre-Existing vs. Built During Hackathon
 
-- **Pre-existing before Nov 2, 2026**: Python prototypes for BOB Offline and AquaPulse OS in the rest of this repository (`engine/`, `scripts/`, `policies/`, web UIs).
-- **Built during the hackathon (Nov 2 – Dec 15, 2026)**: Root open-source `LICENSE` (MIT) and the entire `qnx/` directory — native C99 port of the safety arbiter, SHA-256 receipt verification, `SCHED_FIFO` priority scheduling, cross-process QNX Neutrino 8.0 IPC layer, multi-architecture `Makefile` (`x86_64` and `aarch64le`), and QEMU OS 8.0 benchmarks.
+- **Pre-existing before Nov 2, 2026:** Python prototypes for BOB Offline and AquaPulse OS in the rest of this repository (`engine/`, `scripts/`, `policies/`, web UIs).
+- **Built during the hackathon (Nov 2 – Dec 15, 2026):** Root open-source `LICENSE` (MIT) and the entire `qnx/` directory — native C99 safety arbiter, QNX Resource Manager (`/dev/asce_arbiter`), `procmgr_ability` least-privilege locking, `CLOCK_MONOTONIC` pulse watchdog, `devctl()` client, `mkqnximage` boot-startup snippets (`qemu/snippets/`), cross-process Neutrino 8.0 IPC layer, multi-architecture `Makefile` (`x86_64` and `aarch64le`), and QEMU OS 8.0 benchmarks.
 
 ## Build & Run on QNX SDP 8.0 (QEMU x86_64)
 
@@ -36,74 +41,68 @@ From an SDP 8.0 environment (`qnxsdp-env.sh` on Linux or `qnxsdp-env.bat` on Win
 
 ```sh
 cd qnx
-make                 # outputs build/x86_64/asce_safety_core
+make                 # outputs build/x86_64/{asce_safety_core,asce_arbiterd,asce_ctl}
 # Optional for ARM64 targets:
-make ARCH=aarch64le  # outputs build/aarch64le/asce_safety_core
+make ARCH=aarch64le  # outputs build/aarch64le/{asce_safety_core,asce_arbiterd,asce_ctl}
 ```
 
-### 2. Build & boot QNX OS 8.0 QEMU image
+### 2. Boot Customization (`mkqnximage`)
 
-In an empty VM workspace directory:
+Copy the compiled binaries and repo startup snippets into an empty `mkqnximage` VM workspace so QNX OS 8.0 automatically starts `asce_arbiterd -U 1001:1001 -d` and registers `/dev/asce_arbiter` at boot:
 
 ```sh
 mkdir -p local/snippets
-cp /path/to/qnx/build/x86_64/asce_safety_core ./asce_safety_core
-echo '[uid=0 gid=0 perms=0755] home/root/asce_safety_core=asce_safety_core' > local/snippets/data_files.custom
+cp /path/to/qnx/build/x86_64/{asce_safety_core,asce_arbiterd,asce_ctl} ./
+cp /path/to/qnx/qemu/snippets/{data_files.custom,post_start.custom} local/snippets/
 mkqnximage --type=qemu --arch=x86_64 --tcg=yes --noprompt --ssh-ident=none --build --force
 ```
 
-Boot the image in QEMU (`qemu-system-x86_64`), wait for `Startup complete`, and run on the serial console:
-
-```sh
-uname -a
-pidin info
-/data/home/root/asce_safety_core
-```
-
-*(Or copy over SSH with `scp build/x86_64/asce_safety_core root@<QEMU_IP>:/tmp/` if bridged networking is configured.)*
-
 ## Measured QNX OS 8.0 Execution & Benchmark Output (QEMU x86_64 TCG)
 
-Measured inside QEMU 9.0.2 (`qemu-system-x86_64`, TCG software emulation on Windows 11 ARM64 / WSL2) running QNX SDP 8.0.0 (`2026/10/30-09:10:05EDT x86pc x86_64`):
+Measured live inside QEMU 9.0.2 (`qemu-system-x86_64`, TCG software emulation) running QNX SDP 8.0.0 (`2026/10/30-09:10:05EDT x86pc x86_64`):
 
 ```text
-# uname -a
+---> Starting ASCE QNX Resource Manager (/dev/asce_arbiter)
+Process count:22
+Startup complete
 QNX noname 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# pidin info
-CPU:X86_64 Release:8.0.0  FreeMem:871MB/1023MB BootTime:Nov 18 23:07:01 UTC 2026
-Processes: 17, Threads: 107
-Processor1: 686 AMD 686 F6M6S3 1000MHz FPU
-Processor2: 686 AMD 686 F6M6S3 1000MHz FPU
+# ls -l /dev/asce_arbiter
+crw-rw-rw-  1 root root 0,   1 2026-11-19 00:11 /dev/asce_arbiter
+# echo "bypass=0" > /dev/asce_arbiter
+# echo "shed=medical_oxygen_conc" > /dev/asce_arbiter || echo "FIREWALL_BLOCKED_EACCES (exit=$?)"
+FIREWALL_BLOCKED_EACCES (exit=1)
+# cat /dev/asce_arbiter
+ASCE QNX OS 8.0 Safety Arbiter (/dev/asce_arbiter)
+daemon_pid=290834 uid=1001 gid=1001 sched=SCHED_FIFO(20) abilities_locked=1 watchdog_pulses=5
+evals=2 approved=0 modified=1 rejected=1
+last_caller_pid=57351 last_caller_uid=0
+last_verdict=REJECTED reason=LIFE_SAFETY_LOAD_PROTECTED
+last_hydraulic_psi=98.62 applied_bypass_pct=25.0 last_peak_amps=0.0
+last_sha256=7aee4a48e2c70bd3a414a7f0130bd06d61ca48b8b7d6e196ae095f33d74370b9
+
+# /data/home/root/asce_ctl
+[ResMgr Scenario 1: P-4 Isolation (0% Bypass -> Overridden)]
+  ResMgr(/dev/asce_arbiter) -> APPROVED_MODIFIED (EPA_20_PSI_INTERLOCK_PRV3_BYPASS) | devctl IPC: 1044.99 us | seq=3
+  Hydraulic -> Req Bypass: 0.0% | Applied Bypass: 25.0% | St. Jude (J-42): 98.62 PSI
+  Kernel Creds -> Caller PID=425986 UID=0 | SHA-256 Verified=OK (ea32b273c4f69669...)
+[ResMgr Scenario 2: Cold-Load Pickup (89A -> 50A Stagger)]
+  ResMgr(/dev/asce_arbiter) -> APPROVED_MODIFIED (NEC_INRUSH_STAGGER_ENFORCED) | devctl IPC: 2376.80 us | seq=4
+  Electrical-> Peak Current Bounded: 50.0 A | Stagger Steps: 4 | Planned Delay: 1500 ms
+  Kernel Creds -> Caller PID=425986 UID=0 | SHA-256 Verified=OK (85329c28ea58d310...)
+[ResMgr Scenario 3: Unauthorized Medical O2 Shed]
+  ResMgr(/dev/asce_arbiter) -> REJECTED (LIFE_SAFETY_LOAD_PROTECTED) | devctl IPC: 483.48 us | seq=5
+  Firewall  -> Target Load: medical_oxygen_conc | Actuation Allowed: 0
+  Kernel Creds -> Caller PID=425986 UID=0 | SHA-256 Verified=OK (08d630610380f8e3...)
+
+[ResMgr devctl Benchmark: 1,000 Cycles (Baseline)] 1000 cycles in 306.97 ms (3258 Hz)
+  /dev/asce_arbiter devctl() Latency: mean=303.82 us | p95=510.52 us | p99=847.93 us | max=2177.74 us
+[ResMgr devctl Benchmark: 1,000 Cycles (Under CPU Load Contention)] 1000 cycles in 265.40 ms (3768 Hz)
+  /dev/asce_arbiter devctl() Latency: mean=262.67 us | p95=499.90 us | p99=1020.25 us | max=3978.70 us
+
 # /data/home/root/asce_safety_core
-======================================================================
- ASCE TECHNOLOGIES LLC - DETERMINISTIC CYBER-PHYSICAL SAFETY CORE
- IPC Backend: QNX OS 8.0 native message passing (ChannelCreate/ConnectAttach/MsgSend/MsgReceive/MsgReply)
-======================================================================
-[ARBITER pid=434192] Real-time scheduling active: SCHED_FIFO prio=20
-[SENSOR pid=430082] Connected -> ARBITER(pid=434192, chid=1) & ACTUATOR(pid=434195, chid=1)
-
-[Scenario: 1. Unmitigated P-4 Isolation Request (0% Bypass -> EPA Violation Intercepted)]
-  Arbiter  -> APPROVED_MODIFIED (EPA_20_PSI_INTERLOCK_PRV3_BYPASS) | End-to-End IPC: 3848.44 us
-  Hydraulic-> Req Bypass: 0.0% | Applied Bypass: 25.0% | St. Jude (J-42): 98.62 PSI (EPA>=20.0)
-  Actuator -> executed=1 (ACTUATED_APPROVED_MODIFIED) | SHA-256: ea32b273c4f69669...
-
-[Scenario: 2. Post-Outage Cold-Load Pickup (All 4 Loads = 89A Inrush -> Staggered)]
-  Arbiter  -> APPROVED_MODIFIED (NEC_INRUSH_STAGGER_ENFORCED) | End-to-End IPC: 1501704.65 us
-  Electrical-> Peak Current Bounded: 50.0 A | Stagger Steps: 4 | Total Delay: 1500 ms
-  Actuator -> executed=1 (ACTUATED_APPROVED_MODIFIED) | SHA-256: 85329c28ea58d310...
-
-[Scenario: 3. Unauthorized Load-Shed on Medical O2 Concentrator]
-  Arbiter  -> REJECTED (LIFE_SAFETY_LOAD_PROTECTED) | End-to-End IPC: 1242.03 us
-  Firewall -> Target Load: medical_oxygen_conc
-  Actuator -> executed=0 (BLOCKED_BY_ARBITER_LIFE_SAFETY_LOAD_PROTECTED) | SHA-256: 08d630610380f8e3...
-
-[Benchmark: 1,000 Cycles (Baseline)] 1000 cycles in 247.61 ms (4039 Hz)
-  Round-Trip Arbiter IPC Latency: mean=245.39 us | p95=413.64 us | p99=820.79 us | max=2572.32 us
-
-[Benchmark: 1,000 Cycles (Under CPU Load Contention)] 1000 cycles in 532.12 ms (1879 Hz)
-  Round-Trip Arbiter IPC Latency: mean=528.04 us | p95=1354.19 us | p99=2375.90 us | max=4265.88 us
-
+[Benchmark: 1,000 Cycles (Baseline)] 1000 cycles in 275.70 ms (3627 Hz)
+  Round-Trip Arbiter IPC Latency: mean=273.06 us | p95=575.24 us | p99=1094.48 us | max=2855.67 us
+[Benchmark: 1,000 Cycles (Under CPU Load Contention)] 1000 cycles in 530.76 ms (1884 Hz)
+  Round-Trip Arbiter IPC Latency: mean=528.27 us | p95=1382.50 us | p99=3181.46 us | max=6464.50 us
 [DONE] Clean shutdown of 3-process safety loop.
 ```
-
-Even under software TCG emulation with a background CPU hog running concurrently, QNX `SCHED_FIFO` arbiter round-trip latency stayed at **0.528 ms mean** (`1.35 ms` p95, `4.27 ms` max) — well within a 50 ms cyber-physical control budget.

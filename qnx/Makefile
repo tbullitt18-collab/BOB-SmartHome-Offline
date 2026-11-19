@@ -9,18 +9,27 @@ CFLAGS ?= -V$(QCC_TARGET) -O2 -Wall -Wextra
 LDFLAGS ?=
 
 SRCS = src/main.c src/safety.c src/sha256.c src/ipc.c
+COMMON_SRCS = src/safety.c src/sha256.c
 BIN_DIR = build/$(ARCH)
 TARGET = $(BIN_DIR)/asce_safety_core
+RESMGR = $(BIN_DIR)/asce_arbiterd
+CLIENT = $(BIN_DIR)/asce_ctl
 
 .PHONY: all host clean test-host
 
-all: $(TARGET)
+all: $(TARGET) $(RESMGR) $(CLIENT)
 
 $(BIN_DIR):
 	mkdir -p $(BIN_DIR)
 
 $(TARGET): $(SRCS) | $(BIN_DIR)
 	$(CC) $(CFLAGS) -o $@ $(SRCS) $(LDFLAGS)
+
+$(RESMGR): src/resmgr.c $(COMMON_SRCS) src/asce_devctl.h src/safety.h | $(BIN_DIR)
+	$(CC) $(CFLAGS) -o $@ src/resmgr.c $(COMMON_SRCS) $(LDFLAGS)
+
+$(CLIENT): src/client.c $(COMMON_SRCS) src/asce_devctl.h src/safety.h | $(BIN_DIR)
+	$(CC) $(CFLAGS) -o $@ src/client.c $(COMMON_SRCS) $(LDFLAGS)
 
 # Host unit-test build on Linux/WSL (uses POSIX shm shim in ipc.c - NOT QNX IPC)
 host:
